@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model animal {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique(map: "name") @db.VarChar(50)
+  animal_product animal_product[]
+}
+
+model product {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique(map: "name") @db.VarChar(50)
+  animal_product animal_product[]
+}
+
+model animal_product {
+  id         Int     @id @default(autoincrement())
+  animal_id  Int
+  product_id Int
+  animal     animal  @relation(fields: [animal_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "animal_product_ibfk_1")
+  product    product @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "animal_product_ibfk_2")
+
+  @@index([animal_id], map: "animal_id")
+  @@index([product_id], map: "product_id")
+}
+
+
