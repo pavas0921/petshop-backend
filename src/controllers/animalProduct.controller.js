@@ -7,20 +7,20 @@ export const getAllAnimalProduct = async (req, res) => {
     const newAnimalProduct = await prisma.animal_product.findMany({
       select: {
         id: true,
-        animal: {
-          select: {
-            name: true,
-          },
-        },
-        product: {
-          select: {
-            name: true,
-          },
-        },
+        animal: true,
+        product: true,
       },
     });
+    const computedData = newAnimalProduct.map((item) => {
+      return {
+        id_animal: item.animal.id,
+        name: item.animal.name,
+        product: [item.product.name],
+      };
+    });
+    console.log(computedData);
     if (newAnimalProduct.length >= 1) {
-      res.status(200).json({ status: 201, data: newAnimalProduct });
+      res.status(200).json({ status: 201, data: computedData });
     } else {
       res.status(204).json({ error: true, messageError: "No content" });
     }
@@ -39,6 +39,7 @@ export const getAllDogProduct = async (req, res) => {
         id: true,
         animal: {
           select: {
+            id_animal: true,
             name: true,
           },
         },
