@@ -3,13 +3,34 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
+model rol {
+  idRol             Int              @id @default(autoincrement())
+  rolName           String           @unique(map: "rolName") @db.VarChar(50)
+  users       user[]
+}
+
+model user {
+  idUser             Int    @id @default(autoincrement())
+  cedula           String   @unique(map: "cedula") @db.VarChar(50)
+  name             String   @db.VarChar(255)
+  lastname         String   @db.VarChar(100)
+  address          String   @db.VarChar(100)
+  phone            String   @db.VarChar(20)
+  email            String   @db.VarChar(50)
+  passwordHash     String   
+  idRol            Int      // Esta columna representará la relación con la tabla rol
+  rol              rol      @relation(fields: [idRol], references: [idRol])
+}
+
+
+
 model animal {
   id             Int              @id @default(autoincrement())
-  name           String           @unique(map: "name") @db.VarChar(50)
+  name           String           @unique(map: "animal_name") @db.VarChar(50)
   animal_product animal_product[]
 }
 

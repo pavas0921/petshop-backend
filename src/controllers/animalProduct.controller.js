@@ -35,15 +35,6 @@ export const getAllDogProduct = async (req, res) => {
       where: {
         animal_id: 1,
       },
-      select: {
-        id: true,
-        animal: {
-          select: {
-            id_animal: true,
-            name: true,
-          },
-        },
-      },
     });
     if (newAnimalProduct.length >= 1) {
       res.status(200).json({ status: 201, data: newAnimalProduct });
