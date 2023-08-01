@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
@@ -30,7 +30,7 @@ model user {
 
 model animal {
   id             Int              @id @default(autoincrement())
-  name           String           @unique(map: "name") @db.VarChar(50)
+  name           String           @unique(map: "animal_name") @db.VarChar(50)
   animal_product animal_product[]
 }
 
