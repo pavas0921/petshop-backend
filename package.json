@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.22",
-    "prisma": "^5.0.0"
+    "prisma": "^4.15.0"
   },
   "keywords": [],
   "description": ""
