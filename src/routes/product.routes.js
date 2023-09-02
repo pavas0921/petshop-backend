@@ -6,8 +6,8 @@ import {
 
 const router = express.Router();
 
-//Crear Fave
-router.post("/", createProduct);
+//create Especie
 router.get("/", getAllProduct);
+router.post("/", createProduct);
 
 export default router;

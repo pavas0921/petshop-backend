@@ -1,30 +1,58 @@
-import { PrismaClient } from "@prisma/client";
+import Producto from "../models/producto.js";
 
-const prisma = new PrismaClient();
+// Constantes para códigos de estado HTTP
+const HTTP_NOT_FOUND = 404;
+const HTTP_INTERNAL_SERVER_ERROR = 500;
+const HTTP_CREATED = 201;
+const HTTP_OK = 200;
+const HTTP_NO_CONTENT = 204;
 
-export const getAllProduct = async (req, res) => {
+// Crear un nuevo Especie
+export const createProduct = async (req, res) => {
+  console.log("create Especie");
+  const { name, productDetails, idEspecie, idCategoria } = req.body;
   try {
-    const newProduct = await prisma.product.findMany();
-    if (newProduct.length >= 1) {
-      res.status(200).json({ status: 201, data: newProduct });
-    } else {
-      res.status(204).json({ error: true, messageError: "No content" });
-    }
+    const newProducto = await Producto.create({
+      name,
+      productDetails,
+      idEspecie,
+      idCategoria,
+    });
+    res.status(201).json(newProducto);
   } catch (error) {
-    res.status(500).json({ error: true });
+    console.log(error);
+    res.status(400).json({ error: error });
   }
 };
 
-export const createProduct = async (req, res) => {
-  const { name } = req.body;
+// Crear un nuevo Especie
+export const getAllProduct = async (req, res) => {
+  console.log("create Especie");
   try {
-    const newProduct = await prisma.product.create({
-      data: {
-        name: name,
-      },
-    });
-    res.status(201).json({ status: 201, data: newProduct });
+    const item = await Producto.find().exec();
+    if (item.length > 0) {
+      return res.json({ status: HTTP_OK, item });
+    } else {
+      return res.json({ status: HTTP_NO_CONTENT, item });
+    }
   } catch (error) {
-    res.status(500).json({ error: true });
+    console.log(error);
+    res.status(400).json({ error: error });
+  }
+};
+
+export const getAllProducts = async (req, res) => {
+  try {
+    const item = await Producto.find();
+    if (item.length > 0) {
+      return res.json({ status: HTTP_OK, item });
+    } else {
+      return res.json({ status: HTTP_NO_CONTENT, item });
+    }
+  } catch (error) {
+    res.status(HTTP_INTERNAL_SERVER_ERROR).json({
+      status: HTTP_INTERNAL_SERVER_ERROR,
+      error: "Hubo un error al obtener los productos",
+    });
   }
 };
