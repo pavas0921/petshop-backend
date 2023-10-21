@@ -14,12 +14,16 @@ export const createEspecie = async (req, res) => {
 };
 
 export const getEspecie = async (req, res) => {
-  console.log("hola");
+  console.log("sadasdasdaS");
   try {
     const especieItem = await Especie.find().exec();
-    if (especieItem.length) return res.json({ status: 201, especieItem });
+    if (especieItem.length > 0) {
+      return res.json({ status: 201, especieItem });
+    } else {
+      return res.json({ status: HTTP_NO_CONTENT, especieItem });
+    }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Error al obtener las especies" });
+    res.status(500).json({ error: "Error al obtener las categorias" });
   }
 };

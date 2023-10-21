@@ -1,4 +1,5 @@
 import Producto from "../models/producto.js";
+import Categoria from "../models/categoria.js";
 
 // Constantes para códigos de estado HTTP
 const HTTP_NOT_FOUND = 404;
@@ -7,52 +8,49 @@ const HTTP_CREATED = 201;
 const HTTP_OK = 200;
 const HTTP_NO_CONTENT = 204;
 
-// Crear un nuevo Especie
+// Crear un nuevo producto
 export const createProduct = async (req, res) => {
   console.log("create Especie");
-  const { name, productDetails, idEspecie, idCategoria } = req.body;
+  const { name, idEspecie, idCategoria } = req.body;
   try {
+    console.log("createproduct");
     const newProducto = await Producto.create({
       name,
-      productDetails,
       idEspecie,
       idCategoria,
     });
-    res.status(201).json(newProducto);
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ error: error });
-  }
-};
-
-// Crear un nuevo Especie
-export const getAllProduct = async (req, res) => {
-  console.log("create Especie");
-  try {
-    const item = await Producto.find().exec();
-    if (item.length > 0) {
-      return res.json({ status: HTTP_OK, item });
-    } else {
-      return res.json({ status: HTTP_NO_CONTENT, item });
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ error: error });
-  }
-};
-
-export const getAllProducts = async (req, res) => {
-  try {
-    const item = await Producto.find();
-    if (item.length > 0) {
-      return res.json({ status: HTTP_OK, item });
-    } else {
-      return res.json({ status: HTTP_NO_CONTENT, item });
-    }
-  } catch (error) {
-    res.status(HTTP_INTERNAL_SERVER_ERROR).json({
-      status: HTTP_INTERNAL_SERVER_ERROR,
-      error: "Hubo un error al obtener los productos",
+    res.status(HTTP_OK).json({
+      message: "Producto registrado con éxito",
+      httpStatus: HTTP_OK,
+      status: "success",
+      producto: newProducto,
     });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: error });
+  }
+};
+
+// Obtener todos los productos
+export const getAllProduct = async (req, res) => {
+  try {
+    const item = await Producto.find()
+      .populate()
+      .populate("idCategoria")
+      .populate("idEspecie");
+    if (item.length > 0) {
+      const computedData = item.map((item) => ({
+        idProducto: item._id,
+        nombreProducto: item.name,
+        nombreCategoria: item.idCategoria.name,
+        nombreEspecie: item.idEspecie.name,
+      }));
+      return res.json({ status: HTTP_OK, computedData });
+    } else {
+      return res.json({ status: HTTP_NO_CONTENT, item });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: error });
   }
 };

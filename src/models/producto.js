@@ -5,14 +5,6 @@ const productoSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  productDetails: [
-    {
-      presentacion: String,
-      cantidad: Number,
-      precioCosto: Number,
-      precioVenta: Number,
-    },
-  ],
   idEspecie: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Especie",

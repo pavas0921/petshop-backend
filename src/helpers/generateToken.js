@@ -3,7 +3,7 @@ export const generateToken = (req, res) => {
   try {
     const { user } = req.body;
     const payload = {
-      iduser: user.iduser,
+      username: user.username,
       name: user.name,
       lastname: user.lastname,
       email: user.email,
