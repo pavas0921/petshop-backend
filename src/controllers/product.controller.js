@@ -34,7 +34,9 @@ export const createProduct = async (req, res) => {
 // Obtener todos los productos
 export const getAllProduct = async (req, res) => {
   try {
+    const timeoutMilliseconds = 15000;
     const item = await Producto.find()
+      .maxTimeMS(timeoutMilliseconds)
       .populate()
       .populate("idCategoria")
       .populate("idEspecie");
