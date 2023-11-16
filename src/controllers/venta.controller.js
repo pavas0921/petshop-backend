@@ -1,5 +1,4 @@
 import Venta from "../models/venta.js";
-import detalleProducto from "../models/detalleProducto.js";
 
 // Constantes para códigos de estado HTTP
 const HTTP_NOT_FOUND = 404;
@@ -12,7 +11,7 @@ const HTTP_NO_CONTENT = 204;
 export const createVenta = async (req, res) => {
   const { date, cliente, detalleVenta, totalVenta } = req.body;
   try {
-    console.log("createproduct");
+    console.log("createproduct", req.body);
     const newVenta = await Venta.create({
       date,
       cliente,

@@ -16,11 +16,19 @@ const ventaSchema = new mongoose.Schema({
         ref: "DetalleProducto",
         required: true,
       },
+      nombreProducto: {
+        type: String,
+        required: true,
+      },
       cantidad: {
         type: Number,
         required: true,
       },
       precioUnitario: {
+        type: Number,
+        required: true,
+      },
+      precioTotal: {
         type: Number,
         required: true,
       },
