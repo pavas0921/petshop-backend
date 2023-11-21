@@ -1,4 +1,5 @@
 import Venta from "../models/venta.js";
+import { updateStockById } from "./detalleProducto.controller.js";
 
 // Constantes para códigos de estado HTTP
 const HTTP_NOT_FOUND = 404;
@@ -11,22 +12,34 @@ const HTTP_NO_CONTENT = 204;
 export const createVenta = async (req, res) => {
   const { date, cliente, detalleVenta, totalVenta } = req.body;
   try {
-    console.log("createproduct", req.body);
     const newVenta = await Venta.create({
       date,
       cliente,
       detalleVenta,
       totalVenta,
     });
-    res.status(HTTP_OK).json({
-      message: "Venta registrada con éxito",
-      httpStatus: HTTP_OK,
-      status: "success",
-      venta: newVenta,
-    });
+    if(newVenta){
+      const result = await updateStockById(req, res)
+      if(result.modifiedCount > 0){
+        return res.status(HTTP_OK).json({
+          message: "Venta registrada con éxito e inventario actualizado.",
+          httpStatus: HTTP_OK,
+          status: "success",
+          venta: newVenta,
+        });
+      }
+    }else{
+      return res.status(HTTP_NOT_FOUND).json({
+        message: "Hubo un problema al registrar la venta.",
+        httpStatus: HTTP_NOT_FOUND,
+        status: "success",
+        venta: newVenta,
+      });
+    }
+    
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error: error });
+    return res.status(500).json({ error: error });
   }
 };
 

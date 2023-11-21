@@ -1,5 +1,5 @@
+import { updateOperations } from "../helpers/detalleProductos/calculateUpdateOperations.js";
 import DetalleProducto from "../models/detalleProducto.js";
-import Producto from "../models/producto.js";
 
 // Constantes para códigos de estado HTTP
 const HTTP_NOT_FOUND = 404;
@@ -82,3 +82,44 @@ export const getAllProductsById = async (req, res) => {
     });
   }
 };
+
+
+export const getSeveralProductsDetails = async (products) => {
+  try {
+    if(products.length > 0) {
+      // Obtener solo los IDs de los productos a actualizar
+      const productIds = products.map(product => product.detalleProducto);
+      
+      const items = await DetalleProducto.find({ _id: { $in: productIds } });
+      
+      if(items.length > 0 ){
+        return items
+      }else{
+        return res.json({ status: HTTP_NO_CONTENT, items });
+      }
+    }else{
+      return res.json({ status:HTTP_INTERNAL_SERVER_ERROR });
+    }
+  } catch (error) {
+    return res.json({ status: HTTP_INTERNAL_SERVER_ERROR})
+  }
+}
+
+
+export const updateStockById = async (req, res) =>{
+  
+  try {
+    const {detalleVenta} = req.body
+    if(detalleVenta.length > 0){
+      const productos = await getSeveralProductsDetails(detalleVenta)    
+      if(productos.length > 0){            
+        const updatedProducts = updateOperations(productos, detalleVenta)
+        const result = await DetalleProducto.bulkWrite(updatedProducts);
+        return result     
+      }
+    }
+  } catch (error) {
+    console.log(error)
+    //return res.json({ status: HTTP_INTERNAL_SERVER_ERROR, error: error })
+  }
+}
