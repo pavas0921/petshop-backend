@@ -8,7 +8,7 @@ const HTTP_CREATED = 201;
 const HTTP_OK = 200;
 const HTTP_NO_CONTENT = 204;
 
-// Crear un nuevo Especie
+// Crear un nuevo producto
 export const createDetalleProducto = async (req, res) => {
   const {
     presentacion,
@@ -62,6 +62,38 @@ export const getAllProductsById = async (req, res) => {
     if (item.length > 0) {
       const computedData = item.map((item) => ({
         idDetalle: item._id,
+        idProducto: item.idProducto._id,
+        nombreProducto: item.idProducto.name,
+        presentacion: item.presentacion,
+        margenGanancia: item.porcentajeUtilidad,
+        precioCosto: item.precioCosto,
+        precioVenta: item.precioVenta,
+        stock: item.stock,
+      }));
+      return res.json({ status: HTTP_OK, computedData });
+    } else {
+      return res.json({ status: HTTP_NO_CONTENT, item });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(HTTP_INTERNAL_SERVER_ERROR).json({
+      status: HTTP_INTERNAL_SERVER_ERROR,
+      error: "Hubo un error al obtener los productos",
+    });
+  }
+};
+
+//Obtener los detalles de un producto por su ID
+export const getDetalleProductoById = async (req, res) => {
+  const _id =  req.params;
+  console.log("¨¨¨¨", _id)
+  try {
+      const item = await DetalleProducto.find({
+      _id: _id
+    }).populate({ path: "idProducto", select: "name" });
+    if (item.length > 0) {
+      const computedData = item.map((item) => ({
+        _id: item._id,
         idProducto: item.idProducto._id,
         nombreProducto: item.idProducto.name,
         presentacion: item.presentacion,
