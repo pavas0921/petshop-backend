@@ -1,4 +1,5 @@
 import { updateOperations } from "../helpers/detalleProductos/calculateUpdateOperations.js";
+import { sortArray } from "../helpers/detalleProductos/sortArray.js";
 import DetalleProducto from "../models/detalleProducto.js";
 
 // Constantes para códigos de estado HTTP
@@ -38,10 +39,20 @@ export const createDetalleProducto = async (req, res) => {
 // Obtener todos los detalles de productos
 export const getAllProductDetails = async (req, res) => {
   try {
-    const item = await DetalleProducto.find().populate().populate("idProducto");
-
+    const item = await DetalleProducto.find().populate().populate("idProducto").sort({ "idProducto.name": 1 });
     if (item.length > 0) {
-      return res.json({ status: HTTP_OK, item });
+      const computedData = item.map((item) => ({
+        idDetalle: item._id,
+        idProducto: item.idProducto._id,
+        nombreProducto: item.idProducto.name + " " + item.presentacion,
+        margenGanancia: item.porcentajeUtilidad,
+        precioCosto: item.precioCosto,
+        precioVenta: item.precioVenta,
+        stock: item.stock,
+      }));
+      const sortedComputedData = sortArray(computedData);
+      console.log(computedData);
+      return res.json({ status: HTTP_OK, item: computedData });
     } else {
       return res.json({ status: HTTP_NO_CONTENT, item });
     }
@@ -70,7 +81,9 @@ export const getAllProductsById = async (req, res) => {
         precioVenta: item.precioVenta,
         stock: item.stock,
       }));
-      return res.json({ status: HTTP_OK, computedData });
+      const sortedComputedData = sortArray(computedData);
+      console.log(computedData);
+      return res.json({ status: HTTP_OK, sortedComputedData });
     } else {
       return res.json({ status: HTTP_NO_CONTENT, item });
     }
