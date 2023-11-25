@@ -12,7 +12,7 @@ const BAD_REQUEST = 400;
 
 // Crear un nuevo usuario
 export const createUser = async (req, res) => {
-  const { name, lastname, username, password } = req.body;
+  const { name, lastname, phone, email, password } = req.body;
   const isValidPassword = validatePassword(password);
   try {
     if (isValidPassword) {
@@ -20,8 +20,10 @@ export const createUser = async (req, res) => {
       const user = await User.create({
         name,
         lastname,
-        username,
+        phone,
+        email,
         password: hash,
+        rol: ["6562751b1a6f91aa9ce377ef"],
       });
       res.status(HTTP_OK).json({
         message: "Usuario registrado con éxito",
@@ -44,7 +46,7 @@ export const createUser = async (req, res) => {
 
 export const login = async (req, res, next) => {
   console.log("login", req.body);
-  const { email, password } = req.body;
+  const { name, lastname, phone, email, password } = req.body;
   try {
     const user = await User.findOne({ email });
     if (!user) {

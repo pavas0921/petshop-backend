@@ -9,7 +9,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  username: {
+  phone: {
+    type: String,
+    required: true,
+  },
+  email: {
     type: String,
     required: true,
   },
@@ -17,6 +21,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  rol: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Rol",
+      required: true,
+    },
+  ],
 });
 
 const User = mongoose.model("User", userSchema);

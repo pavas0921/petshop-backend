@@ -7,6 +7,7 @@ import productoRoutes from "../src/routes/product.routes.js";
 import detalleProductoRoutes from "../src/routes/detalleProducto.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import ventaRoutes from "./routes/venta.routes.js";
+import rolRoutes from "./routes/rol.routes.js";
 
 const app = express();
 app.use(cors());
@@ -25,5 +26,6 @@ app.use("/producto", productoRoutes);
 app.use("/detalleProducto", detalleProductoRoutes);
 app.use("/user", userRoutes);
 app.use("/venta", ventaRoutes);
+app.use("/rol", rolRoutes);
 
 export default app;
