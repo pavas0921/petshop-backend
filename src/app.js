@@ -9,6 +9,8 @@ import userRoutes from "./routes/user.routes.js";
 import ventaRoutes from "./routes/venta.routes.js";
 import companyRoutes from "./routes/company.routes.js";
 import bussinessCategoryRoutes from "./routes/businessCategory.routes.js";
+import rolRoutes from "./routes/rol.routes.js";
+
 
 const app = express();
 app.use(cors());
@@ -29,5 +31,6 @@ app.use("/user", userRoutes);
 app.use("/venta", ventaRoutes);
 app.use("/company", companyRoutes);
 app.use("/businessCategory", bussinessCategoryRoutes);
+app.use("/rol", rolRoutes);
 
 export default app;

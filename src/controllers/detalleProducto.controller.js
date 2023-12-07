@@ -39,7 +39,10 @@ export const createDetalleProducto = async (req, res) => {
 // Obtener todos los detalles de productos
 export const getAllProductDetails = async (req, res) => {
   try {
-    const item = await DetalleProducto.find().populate().populate("idProducto").sort({ "idProducto.name": 1 });
+    const item = await DetalleProducto.find()
+      .populate()
+      .populate("idProducto")
+      .sort({ "idProducto.name": 1 });
     if (item.length > 0) {
       const computedData = item.map((item) => ({
         idDetalle: item._id,
@@ -63,8 +66,8 @@ export const getAllProductDetails = async (req, res) => {
 };
 
 // Obtener todos los detalles por idProducto
-
 export const getAllProductsById = async (req, res) => {
+  console.log("hola");
   try {
     const { idProducto } = req.params;
     const item = await DetalleProducto.find({
@@ -81,9 +84,7 @@ export const getAllProductsById = async (req, res) => {
         precioVenta: item.precioVenta,
         stock: item.stock,
       }));
-      const sortedComputedData = sortArray(computedData);
-      console.log(computedData);
-      return res.json({ status: HTTP_OK, sortedComputedData });
+      return res.json({ status: HTTP_OK, computedData });
     } else {
       return res.json({ status: HTTP_NO_CONTENT, item });
     }
@@ -98,11 +99,11 @@ export const getAllProductsById = async (req, res) => {
 
 //Obtener los detalles de un producto por su ID
 export const getDetalleProductoById = async (req, res) => {
-  const _id =  req.params;
-  console.log("¨¨¨¨", _id)
+  const _id = req.params;
+  console.log("¨¨¨¨", _id);
   try {
-      const item = await DetalleProducto.find({
-      _id: _id
+    const item = await DetalleProducto.find({
+      _id: _id,
     }).populate({ path: "idProducto", select: "name" });
     if (item.length > 0) {
       const computedData = item.map((item) => ({
@@ -128,43 +129,40 @@ export const getDetalleProductoById = async (req, res) => {
   }
 };
 
-
 export const getSeveralProductsDetails = async (products) => {
   try {
-    if(products.length > 0) {
+    if (products.length > 0) {
       // Obtener solo los IDs de los productos a actualizar
-      const productIds = products.map(product => product.detalleProducto);
-      
+      const productIds = products.map((product) => product.detalleProducto);
+
       const items = await DetalleProducto.find({ _id: { $in: productIds } });
-      
-      if(items.length > 0 ){
-        return items
-      }else{
+
+      if (items.length > 0) {
+        return items;
+      } else {
         return res.json({ status: HTTP_NO_CONTENT, items });
       }
-    }else{
-      return res.json({ status:HTTP_INTERNAL_SERVER_ERROR });
+    } else {
+      return res.json({ status: HTTP_INTERNAL_SERVER_ERROR });
     }
   } catch (error) {
-    return res.json({ status: HTTP_INTERNAL_SERVER_ERROR})
+    return res.json({ status: HTTP_INTERNAL_SERVER_ERROR });
   }
-}
+};
 
-
-export const updateStockById = async (req, res) =>{
-  
+export const updateStockById = async (req, res) => {
   try {
-    const {detalleVenta} = req.body
-    if(detalleVenta.length > 0){
-      const productos = await getSeveralProductsDetails(detalleVenta)    
-      if(productos.length > 0){            
-        const updatedProducts = updateOperations(productos, detalleVenta)
+    const { detalleVenta } = req.body;
+    if (detalleVenta.length > 0) {
+      const productos = await getSeveralProductsDetails(detalleVenta);
+      if (productos.length > 0) {
+        const updatedProducts = updateOperations(productos, detalleVenta);
         const result = await DetalleProducto.bulkWrite(updatedProducts);
-        return result     
+        return result;
       }
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     //return res.json({ status: HTTP_INTERNAL_SERVER_ERROR, error: error })
   }
-}
+};

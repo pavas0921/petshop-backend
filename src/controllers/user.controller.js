@@ -18,7 +18,7 @@ export const createUser = async (req, res) => {
     if (isValidPassword) {
       const hash = bcrypt.hashSync(password, 12);
       const user = await User.create({
-        name, lastname, id, password, rolId, companyId
+        name, lastname, id, password: hash, rolId, companyId
       });
       res.status(HTTP_OK).json({
         message: "Usuario registrado con éxito",
@@ -41,7 +41,7 @@ export const createUser = async (req, res) => {
 
 export const login = async (req, res, next) => {
   console.log("login", req.body);
-  const { email, password } = req.body;
+  const { name, lastname, phone, email, password } = req.body;
   try {
     const user = await User.findOne({ email });
     if (!user) {

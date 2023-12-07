@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const rolSchema = new mongoose.Schema({
-  category_name: {
+  name: {
     type: String,
     required: true,
   },

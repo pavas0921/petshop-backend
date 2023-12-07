@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true
-  },
+  }, 
   password: {
     type: String,
     required: true,
@@ -28,7 +28,6 @@ const userSchema = new mongoose.Schema({
     ref: "Company",
     required: true,
   },
-  
 });
 
 const User = mongoose.model("User", userSchema);
