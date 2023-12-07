@@ -7,19 +7,7 @@ const petProductsSchema = new mongoose.Schema({
   },
   barCode: {
     type: String,
-  },
-  stock: {
-    type: Number,
-    required: true,
-  },
-  precioCosto: {
-    type: Number,
-    required: true,
-  },
-  precioVenta: {
-    type: Number,
-    required: true,
-  },
+  }, 
   idEspecie: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Especie",
@@ -30,6 +18,12 @@ const petProductsSchema = new mongoose.Schema({
     ref: "Categoria",
     required: true,
   },
+  createdBy:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  }
+
 });
 
 const petProducts = mongoose.model("petProducts", petProductsSchema);
