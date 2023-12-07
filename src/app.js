@@ -10,7 +10,7 @@ import ventaRoutes from "./routes/venta.routes.js";
 import companyRoutes from "./routes/company.routes.js";
 import bussinessCategoryRoutes from "./routes/businessCategory.routes.js";
 import rolRoutes from "./routes/rol.routes.js";
-
+import inventoryRoutes from "./routes/inventory.routes.js";
 
 const app = express();
 app.use(cors());
@@ -32,5 +32,6 @@ app.use("/venta", ventaRoutes);
 app.use("/company", companyRoutes);
 app.use("/businessCategory", bussinessCategoryRoutes);
 app.use("/rol", rolRoutes);
+app.use("/inventory", inventoryRoutes);
 
 export default app;
