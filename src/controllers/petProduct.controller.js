@@ -9,10 +9,11 @@ const HTTP_NO_CONTENT = 204;
 
 // Crear un nuevo producto
 export const createPetProduct = async (req, res) => {
-  const { productName, barCode, stock, precioCosto, precioVenta, idEspecie, idCategoria } = req.body;
+  const { productName, barCode, image, idEspecie, idCategoria, createdBy } = req.body;
   try {
-    console.log("createproduct");
-    const newProducto = await petProducts.create({productName, barCode, stock, precioCosto, precioVenta, idEspecie, idCategoria});
+    const newProducto = await petProducts.create({
+      productName, barCode, image, idEspecie, idCategoria, createdBy
+    });
     res.status(HTTP_OK).json({
       message: "Producto registrado con éxito",
       httpStatus: HTTP_OK,

@@ -7,7 +7,10 @@ const petProductsSchema = new mongoose.Schema({
   },
   barCode: {
     type: String,
-  }, 
+  },
+  image: {
+    type: String,
+  },
   idEspecie: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Especie",
