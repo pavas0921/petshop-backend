@@ -9,14 +9,26 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  username: {
+  id: {
     type: String,
     required: true,
+    unique: true
   },
   password: {
     type: String,
     required: true,
   },
+  rolId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Rol",
+    required: true,
+  },
+  companyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Company",
+    required: true,
+  },
+  
 });
 
 const User = mongoose.model("User", userSchema);

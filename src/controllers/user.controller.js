@@ -12,16 +12,13 @@ const BAD_REQUEST = 400;
 
 // Crear un nuevo usuario
 export const createUser = async (req, res) => {
-  const { name, lastname, username, password } = req.body;
+  const { name, lastname, id, password, rolId, companyId } = req.body;
   const isValidPassword = validatePassword(password);
   try {
     if (isValidPassword) {
       const hash = bcrypt.hashSync(password, 12);
       const user = await User.create({
-        name,
-        lastname,
-        username,
-        password: hash,
+        name, lastname, id, password, rolId, companyId
       });
       res.status(HTTP_OK).json({
         message: "Usuario registrado con éxito",

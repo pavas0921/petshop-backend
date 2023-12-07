@@ -1,13 +1,13 @@
 import express from "express";
 import {
-  createProduct,
+  createPetProduct,
   getAllProduct,
-} from "../controllers/product.controller.js";
+} from "../controllers/petProduct.controller.js";
 
 const router = express.Router();
 
 //create Especie
 router.get("/", getAllProduct);
-router.post("/", createProduct);
+router.post("/", createPetProduct);
 
 export default router;
