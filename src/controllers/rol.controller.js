@@ -18,11 +18,10 @@ export const createRol = async (req, res) => {
   }
 };
 
-export const getCategoria = async (req, res) => {
-  console.log("hola");
+export const getAllRoles = async (req, res) => {
   try {
-    const categoriaItem = await Categoria.find().exec();
-    if (categoriaItem.length) return res.json({ status: 201, categoriaItem });
+    const rolItems = await Rol.find().exec();
+    if (rolItems.length) return res.json({ httpStatus: HTTP_OK, roles: rolItems });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Error al obtener las categorias" });

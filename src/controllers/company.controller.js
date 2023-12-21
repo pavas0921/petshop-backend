@@ -11,11 +11,12 @@ export const createCompany = async (req, res) => {
   }
 };
 
-export const getCompany = async (req, res) => {
+export const getAllCompanies = async (req, res) => {
   try {
     const companyItem = await Company.find().exec();
-    if (companyItem.length) return res.json({ status: 201, categoriaItem });
+    if (companyItem.length) return res.json({ status: 201, company: companyItem });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: "Error al obtener las categorias" });
   }
 };

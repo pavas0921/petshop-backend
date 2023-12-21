@@ -1,4 +1,4 @@
-import petProducts from "../models/petProducts.js";
+import petProducts from "../models/petProducts.js"
 
 // Constantes para códigos de estado HTTP
 const HTTP_NOT_FOUND = 404;
@@ -9,14 +9,14 @@ const HTTP_NO_CONTENT = 204;
 
 // Crear un nuevo producto
 export const createPetProduct = async (req, res) => {
-  const { productName, barCode, image, idEspecie, idCategoria, createdBy } = req.body;
+  const { productName, barCode, image, idEspecie, idCategoria, idBusinessCategory, createdBy } = req.body;
   try {
     const newProducto = await petProducts.create({
-      productName, barCode, image, idEspecie, idCategoria, createdBy
+      productName, barCode, image, idEspecie, idCategoria, idBusinessCategory, createdBy
     });
-    res.status(HTTP_OK).json({
+    res.status(HTTP_CREATED).json({
       message: "Producto registrado con éxito",
-      httpStatus: HTTP_OK,
+      httpStatus: HTTP_CREATED,
       status: "success",
       producto: newProducto,
     });

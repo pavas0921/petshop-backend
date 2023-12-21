@@ -20,9 +20,9 @@ export const createUser = async (req, res) => {
       const user = await User.create({
         name, lastname, id, password: hash, rolId, companyId
       });
-      res.status(HTTP_OK).json({
+      res.status(HTTP_CREATED).json({
         message: "Usuario registrado con éxito",
-        httpStatus: HTTP_OK,
+        httpStatus: HTTP_CREATED,
         status: "success",
         user: user,
       });
@@ -40,10 +40,9 @@ export const createUser = async (req, res) => {
 };
 
 export const login = async (req, res, next) => {
-  console.log("login", req.body);
-  const { name, lastname, phone, email, password } = req.body;
+  const { id, password} = req.body;
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ id });
     if (!user) {
       return res.status(404).json({ error: "Usuario no encontrado" });
     } else {

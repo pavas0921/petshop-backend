@@ -14,11 +14,14 @@ const petProductsSchema = new mongoose.Schema({
   idEspecie: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Especie",
-    required: true,
   },  
   idCategoria: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Categoria",
+  },
+  idBusinessCategory: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "businessCategory",
     required: true,
   },
   createdBy:{
