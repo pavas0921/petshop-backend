@@ -39,6 +39,32 @@ export const createUser = async (req, res) => {
   }
 };
 
+// Obtener todos los detalles de productos
+export const getAllUser = async (req, res) => {
+  try {
+    const users = await User.find()
+      .populate()
+      .populate("rolId")
+      .populate("companyId")
+    if (users.length > 0) {
+     const computedData = users.map((users) => ({
+        _id: users._id,
+        name: users.name,
+        lastname: users.lastname,
+        id: users.id,
+        rol: users.rolId.name,
+        company: users.companyId.company
+      }));
+      return res.json({ status: HTTP_OK, users: computedData, status: "success" });
+    } else {
+      return res.json({ status: HTTP_NO_CONTENT, status: "success" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: error });
+  }
+};
+
 export const login = async (req, res, next) => {
   const { id, password} = req.body;
   try {
