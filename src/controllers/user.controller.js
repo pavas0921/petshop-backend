@@ -20,9 +20,9 @@ export const createUser = async (req, res) => {
       const user = await User.create({
         name, lastname, id, password: hash, rolId, companyId
       });
-      res.status(HTTP_OK).json({
+      res.status(HTTP_CREATED).json({
         message: "Usuario registrado con éxito",
-        httpStatus: HTTP_OK,
+        httpStatus: HTTP_CREATED,
         status: "success",
         user: user,
       });
@@ -39,11 +39,36 @@ export const createUser = async (req, res) => {
   }
 };
 
-export const login = async (req, res, next) => {
-  console.log("login", req.body);
-  const { name, lastname, phone, email, password } = req.body;
+// Obtener todos los detalles de productos
+export const getAllUser = async (req, res) => {
   try {
-    const user = await User.findOne({ email });
+    const users = await User.find()
+      .populate()
+      .populate("rolId")
+      .populate("companyId")
+    if (users.length > 0) {
+     const computedData = users.map((users) => ({
+        _id: users._id,
+        name: users.name,
+        lastname: users.lastname,
+        id: users.id,
+        rol: users.rolId.name,
+        company: users.companyId.company
+      }));
+      return res.json({ status: HTTP_OK, users: computedData, status: "success" });
+    } else {
+      return res.json({ status: HTTP_NO_CONTENT, status: "success" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: error });
+  }
+};
+
+export const login = async (req, res, next) => {
+  const { id, password} = req.body;
+  try {
+    const user = await User.findOne({ id });
     if (!user) {
       return res.status(404).json({ error: "Usuario no encontrado" });
     } else {

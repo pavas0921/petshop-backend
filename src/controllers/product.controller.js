@@ -33,9 +33,9 @@ export const createProduct = async (req, res) => {
       idCompany,
       createdBy,
     });
-    res.status(HTTP_OK).json({
+    res.status(HTTP_CREATED).json({
       message: "Producto registrado con éxito",
-      httpStatus: HTTP_OK,
+      httpStatus: HTTP_CREATED,
       status: "success",
       producto: newProducto,
     });

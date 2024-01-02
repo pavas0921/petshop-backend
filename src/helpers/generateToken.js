@@ -3,10 +3,8 @@ export const generateToken = (req, res) => {
   try {
     const { user } = req.body;
     const payload = {
-      username: user.username,
-      name: user.name,
-      lastname: user.lastname,
-      email: user.email,
+      rolId: user.rolId,
+      companyId: user.companyId,
       token: null,
     };
     const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "1h" });
