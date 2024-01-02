@@ -1,4 +1,4 @@
-import petProducts from "../models/petProducts.js";
+import product from "../models/product.js";
 
 // Constantes para códigos de estado HTTP
 const HTTP_NOT_FOUND = 404;
@@ -8,11 +8,30 @@ const HTTP_OK = 200;
 const HTTP_NO_CONTENT = 204;
 
 // Crear un nuevo producto
-export const createPetProduct = async (req, res) => {
-  const { productName, barCode, image, idEspecie, idCategoria, createdBy } = req.body;
+export const createProduct = async (req, res) => {
+  const {
+    productName,
+    barCode,
+    image,
+    costPrice,
+    salePrice,
+    idEspecie,
+    idCategoria,
+    idCompany,
+    createdBy,
+  } = req.body;
+  console.log("req.body", req.body);
   try {
-    const newProducto = await petProducts.create({
-      productName, barCode, image, idEspecie, idCategoria, createdBy
+    const newProducto = await product.create({
+      productName,
+      barCode,
+      image,
+      costPrice,
+      salePrice,
+      idEspecie,
+      idCategoria,
+      idCompany,
+      createdBy,
     });
     res.status(HTTP_OK).json({
       message: "Producto registrado con éxito",
@@ -29,7 +48,8 @@ export const createPetProduct = async (req, res) => {
 // Obtener todos los productos
 export const getAllProduct = async (req, res) => {
   try {
-    const item = await Producto.find()
+    const item = await product
+      .find()
       .populate()
       .populate("idCategoria")
       .populate("idEspecie");

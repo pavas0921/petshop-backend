@@ -11,22 +11,17 @@ export const createAddProduct = async (req, res) => {
   const { companyId, petProductId, precioCosto, precioVenta, stock } = req.body;
   try {
     const newProduct = await Rol.create({
-        companyId, petProductId, precioCosto, precioVenta, stock
+      companyId,
+      petProductId,
+      precioCosto,
+      precioVenta,
+      stock,
     });
-    res.status(HTTP_CREATED).json({ status: HTTP_CREATED, product: newProduct });
+    res
+      .status(HTTP_CREATED)
+      .json({ status: HTTP_CREATED, product: newProduct });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error });
-  }
-};
-
-export const getCategoria = async (req, res) => {
-  console.log("hola");
-  try {
-    const categoriaItem = await Categoria.find().exec();
-    if (categoriaItem.length) return res.json({ status: 201, categoriaItem });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Error al obtener las categorias" });
   }
 };

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const petProductsSchema = new mongoose.Schema({
+const productsSchema = new mongoose.Schema({
   productName: {
     type: String,
     required: true,
@@ -11,24 +11,36 @@ const petProductsSchema = new mongoose.Schema({
   image: {
     type: String,
   },
+  costPrice: {
+    type: Number,
+    required: true,
+  },
+  salePrice: {
+    type: Number,
+    required: true,
+  },
   idEspecie: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Especie",
     required: true,
-  },  
+  },
   idCategoria: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Categoria",
     required: true,
   },
-  createdBy:{
+  idCompany: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Company",
+    required: true,
+  },
+  createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
-  }
-
+  },
 });
 
-const petProducts = mongoose.model("petProducts", petProductsSchema);
+const product = mongoose.model("product", productsSchema);
 
-export default petProducts;
+export default product;

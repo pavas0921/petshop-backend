@@ -3,7 +3,7 @@ import express from "express";
 import { connect } from "./config/database.js";
 import especieRoutes from "../src/routes/especie.routes.js";
 import categoriaRoutes from "../src/routes/categoria.routes.js";
-import petProductRoutes from "../src/routes/petProduct.routes.js";
+import productRoutes from "../src/routes/product.routes.js";
 import detalleProductoRoutes from "../src/routes/detalleProducto.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import ventaRoutes from "./routes/venta.routes.js";
@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 
 app.use("/especie", especieRoutes);
 app.use("/categoria", categoriaRoutes);
-app.use("/petProducts", petProductRoutes);
+app.use("/product", productRoutes);
 app.use("/detalleProducto", detalleProductoRoutes);
 app.use("/user", userRoutes);
 app.use("/venta", ventaRoutes);
