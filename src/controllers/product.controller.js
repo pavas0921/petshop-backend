@@ -16,6 +16,7 @@ export const createProduct = async (req, res) => {
     costPrice,
     salePrice,
     idEspecie,
+    stock,
     idCategoria,
     idCompany,
     createdBy,
@@ -28,6 +29,7 @@ export const createProduct = async (req, res) => {
       image,
       costPrice,
       salePrice,
+      stock,
       idEspecie,
       idCategoria,
       idCompany,
@@ -48,24 +50,72 @@ export const createProduct = async (req, res) => {
 // Obtener todos los productos
 export const getAllProduct = async (req, res) => {
   try {
-    const item = await product
-      .find()
-      .populate()
-      .populate("idCategoria")
-      .populate("idEspecie");
+    const item = await product.find().exec();
     if (item.length > 0) {
-      const computedData = item.map((item) => ({
-        idProducto: item._id,
-        nombreProducto: item.name,
-        nombreCategoria: item.idCategoria.name,
-        nombreEspecie: item.idEspecie.name,
-      }));
-      return res.json({ status: HTTP_OK, computedData });
+      return res.json({
+        httpStatus: HTTP_OK,
+        content: item,
+        status: "success",
+      });
     } else {
       return res.json({ status: HTTP_NO_CONTENT, item });
     }
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: error });
+  }
+};
+
+// Obtener por productos por compañía
+export const getProductsByCompanyId = async (req, res) => {
+  const idCompany = req.params.idCompany;
+  try {
+    const item = await product.find({ idCompany: idCompany })
+    .populate("idCategoria")
+    .populate("idEspecie")
+    .exec();
+    if (item.length > 0) {
+      return res.json({
+        httpStatus: HTTP_OK,
+        content: item,
+        status: "success",
+      });
+    } else {
+      return res.json({ status: HTTP_NO_CONTENT, item });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: error });
+  }
+};
+
+
+// Eliminar un producto por su ID
+export const deleteProductById = async (req, res) => {
+  const idProduct = req.params.idProduct;
+
+  try {
+    // Buscar el producto por su ID y eliminarlo
+    const deletedProduct = await product.findByIdAndDelete(idProduct);
+
+    // Verificar si el producto existe y fue eliminado
+    if (deletedProduct) {
+      return res.json({
+        httpStatus: HTTP_OK,
+        message: "Producto eliminado con éxito",
+        status: "success",
+        deleted: deletedProduct,
+      });
+    } else {
+      // Si el producto no existe
+      return res.status(HTTP_NOT_FOUND).json({
+        httpStatus: HTTP_NOT_FOUND,
+        message: "Producto no encontrado",
+        status: "error",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(HTTP_INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
 };

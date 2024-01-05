@@ -18,7 +18,12 @@ export const createUser = async (req, res) => {
     if (isValidPassword) {
       const hash = bcrypt.hashSync(password, 12);
       const user = await User.create({
-        name, lastname, id, password: hash, rolId, companyId
+        name,
+        lastname,
+        id,
+        password: hash,
+        rolId,
+        companyId,
       });
       res.status(HTTP_CREATED).json({
         message: "Usuario registrado con éxito",
@@ -45,17 +50,21 @@ export const getAllUser = async (req, res) => {
     const users = await User.find()
       .populate()
       .populate("rolId")
-      .populate("companyId")
+      .populate("companyId");
     if (users.length > 0) {
-     const computedData = users.map((users) => ({
+      const computedData = users.map((users) => ({
         _id: users._id,
         name: users.name,
         lastname: users.lastname,
         id: users.id,
         rol: users.rolId.name,
-        company: users.companyId.company
+        company: users.companyId.company,
       }));
-      return res.json({ status: HTTP_OK, users: computedData, status: "success" });
+      return res.json({
+        status: HTTP_OK,
+        users: computedData,
+        status: "success",
+      });
     } else {
       return res.json({ status: HTTP_NO_CONTENT, status: "success" });
     }
@@ -66,7 +75,7 @@ export const getAllUser = async (req, res) => {
 };
 
 export const login = async (req, res, next) => {
-  const { id, password} = req.body;
+  const { id, password } = req.body;
   try {
     const user = await User.findOne({ id });
     if (!user) {

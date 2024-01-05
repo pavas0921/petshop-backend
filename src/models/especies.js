@@ -5,6 +5,11 @@ const especieSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  idCompany: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Company",
+    required: true,
+  },
 });
 
 const Especie = mongoose.model("Especie", especieSchema);

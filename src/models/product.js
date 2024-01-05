@@ -19,18 +19,19 @@ const productsSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  stock: {
+    type: Number,
+    required: true,
+  },
   idEspecie: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Especie",
+    required: true
   },
   idCategoria: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Categoria",
-  },
-  idBusinessCategory: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "businessCategory",
-    required: true,
+    required: true
   },
   idCompany: {
     type: mongoose.Schema.Types.ObjectId,

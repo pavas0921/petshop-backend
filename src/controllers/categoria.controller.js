@@ -1,26 +1,37 @@
 import Categoria from "../models/categoria.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 // Crear un nuevo Categoria
 export const createCategoria = async (req, res) => {
   console.log("create Categoria");
-  const { name } = req.body;
+  const { name, idCompany } = req.body;
   try {
-    const newCategoria = await Categoria.create({ name });
-    res.status(201).json(newCategoria);
+    const newCategoria = await Categoria.create({ name, idCompany });
+    res
+      .status(+process.env.HTTP_CREATED)
+      .json({
+        httpStatus: +process.env.HTTP_CREATED,
+        category: newCategoria,
+        message: "¡Categoria registrada con éxito!",
+      });
   } catch (error) {
     Categoria;
     console.log(error);
-    res.status(400).json({ error: error });
+    res.status(process.env.HTTP_OK).json({ error: error });
   }
 };
 
 export const getCategoria = async (req, res) => {
   console.log("hola");
   try {
-    const categoriaItem = await Categoria.find().exec();
-    if (categoriaItem.length) return res.json({ status: 201, categoriaItem });
+    const item = await Categoria.find().exec();
+    if (item.length > 0) {
+      return res.json({ httpStatus: +process.env.HTTP_OK, content: item });
+    }else{
+      return res.json({ httpStatus: +process.env.HTTP_NO_CONTENT, content: item });
+    }
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Error al obtener las categorias" });
   }
 };
