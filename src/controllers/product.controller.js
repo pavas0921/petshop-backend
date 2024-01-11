@@ -20,6 +20,7 @@ export const createProduct = async (req, res) => {
     idCategoria,
     idCompany,
     createdBy,
+    status = true,
   } = req.body;
   console.log("req.body", req.body);
   try {
@@ -34,6 +35,7 @@ export const createProduct = async (req, res) => {
       idCategoria,
       idCompany,
       createdBy,
+      status,
     });
     res.status(HTTP_CREATED).json({
       message: "Producto registrado con éxito",
@@ -70,10 +72,11 @@ export const getAllProduct = async (req, res) => {
 export const getProductsByCompanyId = async (req, res) => {
   const idCompany = req.params.idCompany;
   try {
-    const item = await product.find({ idCompany: idCompany })
-    .populate("idCategoria")
-    .populate("idEspecie")
-    .exec();
+    const item = await product
+      .find({ idCompany: idCompany })
+      .populate("idCategoria")
+      .populate("idEspecie")
+      .exec();
     if (item.length > 0) {
       return res.json({
         httpStatus: HTTP_OK,
@@ -89,22 +92,26 @@ export const getProductsByCompanyId = async (req, res) => {
   }
 };
 
-
-// Eliminar un producto por su ID
-export const deleteProductById = async (req, res) => {
-  const idProduct = req.params.idProduct;
+export const updateProductStatusById = async (req, res) => {
+  const _id = req.params._id;
+  console.log("----", req.body);
+  const newStatus = req.body.status; // Asegúrate de enviar el nuevo estado en el cuerpo de la solicitud
 
   try {
-    // Buscar el producto por su ID y eliminarlo
-    const deletedProduct = await product.findByIdAndDelete(idProduct);
+    // Buscar el producto por su ID y actualizar el estado
+    const updatedProduct = await product.findByIdAndUpdate(
+      _id,
+      { status: newStatus },
+      { new: true } // Devuelve el documento actualizado
+    );
 
-    // Verificar si el producto existe y fue eliminado
-    if (deletedProduct) {
+    // Verificar si el producto existe y fue actualizado
+    if (updatedProduct) {
       return res.json({
         httpStatus: HTTP_OK,
-        message: "Producto eliminado con éxito",
+        message: "Estado del producto actualizado con éxito",
         status: "success",
-        deleted: deletedProduct,
+        updated: updatedProduct,
       });
     } else {
       // Si el producto no existe

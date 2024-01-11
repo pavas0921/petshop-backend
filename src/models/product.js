@@ -26,12 +26,12 @@ const productsSchema = new mongoose.Schema({
   idEspecie: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Especie",
-    required: true
+    required: true,
   },
   idCategoria: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Categoria",
-    required: true
+    required: true,
   },
   idCompany: {
     type: mongoose.Schema.Types.ObjectId,
@@ -41,6 +41,10 @@ const productsSchema = new mongoose.Schema({
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required: true,
+  },
+  status: {
+    type: Boolean,
     required: true,
   },
 });
