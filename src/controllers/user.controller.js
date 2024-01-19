@@ -17,7 +17,7 @@ export const createUser = async (req, res) => {
   try {
     if (isValidPassword) {
       const hash = bcrypt.hashSync(password, 12);
-      const user = await User.create({
+      const item = await User.create({
         name,
         lastname,
         id,
@@ -29,7 +29,7 @@ export const createUser = async (req, res) => {
         message: "Usuario registrado con éxito",
         httpStatus: HTTP_CREATED,
         status: "success",
-        user: user,
+        content: item,
       });
     } else {
       res.status(BAD_REQUEST).json({
@@ -47,12 +47,12 @@ export const createUser = async (req, res) => {
 // Obtener todos los detalles de productos
 export const getAllUser = async (req, res) => {
   try {
-    const users = await User.find()
+    const item = await User.find()
       .populate()
       .populate("rolId")
       .populate("companyId");
-    if (users.length > 0) {
-      const computedData = users.map((users) => ({
+    if (item.length > 0) {
+      const computedData = item.map((users) => ({
         _id: users._id,
         name: users.name,
         lastname: users.lastname,
@@ -60,9 +60,9 @@ export const getAllUser = async (req, res) => {
         rol: users.rolId.name,
         company: users.companyId.company,
       }));
-      return res.json({
-        status: HTTP_OK,
-        users: computedData,
+      res.status(+process.env.HTTP_CREATED).json({
+        httpStatus: +process.env.HTTP_CREATED,
+        content: item,
         status: "success",
       });
     } else {
