@@ -36,3 +36,19 @@ export const registerSurvey = async (req, res) => {
     res.status(process.env.HTTP_OK).json({ error: error });
   }
 };
+
+export const getAllSurveys = async (req, res) => {
+  try {
+    const item = await encuestaMuezza.find().exec();
+    if (item.length > 0){
+      res.status(+process.env.HTTP_OK).json({
+        httpStatus: +process.env.HTTP_ok,
+        content: item,
+        status: "success",
+      });
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: "Error al obtener las categorias" });
+  }
+};
