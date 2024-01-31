@@ -126,3 +126,68 @@ export const updateProductStatusById = async (req, res) => {
     res.status(HTTP_INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
 };
+
+// Actualizar un producto por su ID
+export const updateProductById = async (req, res) => {
+  const _id = req.params._id;
+  console.log(req.params)
+
+  // Extraer los campos que se pueden actualizar
+  const {
+    productName,
+    barCode,
+    image,
+    costPrice,
+    salePrice,
+    stock,
+    idEspecie,
+    idCategoria,
+    idCompany,
+    createdBy,
+    status,
+  } = req.body;
+
+  try {
+    // Buscar el producto por su ID y actualizar los campos proporcionados
+    const updatedProduct = await product.findByIdAndUpdate(
+      _id,
+      {
+        productName,
+        barCode,
+        image,
+        costPrice,
+        salePrice,
+        stock,
+        idEspecie,
+        idCategoria,
+        idCompany,
+        createdBy,
+        status,
+      },
+      { new: true } // Devuelve el documento actualizado
+    );
+
+    // Verificar si el producto existe y fue actualizado
+    if (updatedProduct) {
+      return res.json({
+        httpStatus: HTTP_OK,
+        message: "Producto actualizado con éxito",
+        status: "success",
+        updated: updatedProduct,
+      });
+    } else {
+      // Si el producto no existe
+      return res.status(HTTP_NOT_FOUND).json({
+        httpStatus: HTTP_NOT_FOUND,
+        message: "Producto no encontrado",
+        status: "error",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(HTTP_INTERNAL_SERVER_ERROR).json({ error: error.message });
+  }
+};
+
+
+
