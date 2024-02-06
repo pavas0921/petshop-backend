@@ -12,6 +12,8 @@ import bussinessCategoryRoutes from "./routes/businessCategory.routes.js";
 import rolRoutes from "./routes/rol.routes.js";
 import inventoryRoutes from "./routes/inventory.routes.js";
 import muezzaSurveyRoutes from "./routes/muezzaSurvey.routes.js";
+import customerRoutes from "./routes/customer.routes.js";
+
 
 const app = express();
 app.use(cors());
@@ -35,5 +37,6 @@ app.use("/businessCategory", bussinessCategoryRoutes);
 app.use("/rol", rolRoutes);
 app.use("/inventory", inventoryRoutes);
 app.use("/muezzaSurvey", muezzaSurveyRoutes);
+app.use("/customer", customerRoutes);
 
 export default app;
