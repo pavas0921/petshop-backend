@@ -10,8 +10,13 @@ const HTTP_NO_CONTENT = 204;
 export const createCustomer = async (req, res) => {
   const { cedula, firstName, lastName, phone, address, comments, idCompany } = req.body;
   try {
-    const newCustomer = await Customer.create({ cedula, firstName, lastName, phone, address, comments, idCompany });
-    res.status(201).json(newCustomer);
+    const item = await Customer.create({ cedula, firstName, lastName, phone, address, comments, idCompany });
+    res.status(HTTP_CREATED).json({
+      message: "Cliente registrado con éxito",
+      httpStatus: HTTP_CREATED,
+      status: "success",
+      producto: item,
+    });
   } catch (error) {
     res.status(400).json({ error: error });
   }
