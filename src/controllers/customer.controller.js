@@ -15,7 +15,7 @@ export const createCustomer = async (req, res) => {
       message: "Cliente registrado con éxito",
       httpStatus: HTTP_CREATED,
       status: "success",
-      producto: item,
+      content: item,
     });
   } catch (error) {
     res.status(400).json({ error: error });
