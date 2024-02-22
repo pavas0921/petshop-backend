@@ -5,7 +5,7 @@ const ventaSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  cliente: {
+  IdCliente: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Customer",
     required: true,

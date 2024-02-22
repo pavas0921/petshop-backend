@@ -10,11 +10,11 @@ const HTTP_NO_CONTENT = 204;
 
 // Crear un nuevo producto
 export const createVenta = async (req, res) => {
-  const { date, cliente, detalleVenta, totalVenta } = req.body;
+  const { date, IdCliente, detalleVenta, totalVenta } = req.body;
   try {
     const newVenta = await Venta.create({
       date,
-      cliente,
+      IdCliente,
       detalleVenta,
       totalVenta,
     });
