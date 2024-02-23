@@ -1,6 +1,6 @@
 import { updateOperations } from "../helpers/detalleProductos/calculateUpdateOperations.js";
 import { sortArray } from "../helpers/detalleProductos/sortArray.js";
-import DetalleProducto from "../models/detalleProducto.js";
+import product from "../models/product.js";
 
 // Constantes para códigos de estado HTTP
 const HTTP_NOT_FOUND = 404;
@@ -130,14 +130,14 @@ export const getDetalleProductoById = async (req, res) => {
 };
 
 export const getSeveralProductsDetails = async (products) => {
+  
   try {
     if (products.length > 0) {
       // Obtener solo los IDs de los productos a actualizar
-      const productIds = products.map((product) => product.detalleProducto);
-
-      const items = await DetalleProducto.find({ _id: { $in: productIds } });
-
+      const productIds = products.map((product) => product._id);
+      const items = await product.find({ _id: { $in: productIds } });
       if (items.length > 0) {
+        console.log("it", items[0]._id.toString())
         return items;
       } else {
         return res.json({ status: HTTP_NO_CONTENT, items });
@@ -151,12 +151,16 @@ export const getSeveralProductsDetails = async (products) => {
 };
 
 export const updateStockById = async (req, res) => {
+  
   try {
-    const { detalleVenta } = req.body;
-    if (detalleVenta.length > 0) {
-      const productos = await getSeveralProductsDetails(detalleVenta);
+    const { productsDetails } = req.body;
+    
+    if (productsDetails.length > 0) {
+      
+      const productos = await getSeveralProductsDetails(productsDetails);
+      
       if (productos.length > 0) {
-        const updatedProducts = updateOperations(productos, detalleVenta);
+        const updatedProducts = updateOperations(productos, productsDetails);
         const result = await DetalleProducto.bulkWrite(updatedProducts);
         return result;
       }

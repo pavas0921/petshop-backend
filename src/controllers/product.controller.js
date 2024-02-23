@@ -1,4 +1,5 @@
 import product from "../models/product.js";
+import { updateOperations } from "../helpers/detalleProductos/calculateUpdateOperations.js";
 
 // Constantes para códigos de estado HTTP
 const HTTP_NOT_FOUND = 404;
@@ -22,7 +23,6 @@ export const createProduct = async (req, res) => {
     createdBy,
     status = true,
   } = req.body;
-  console.log("req.body", req.body);
   try {
     const newProducto = await product.create({
       productName,
@@ -44,7 +44,6 @@ export const createProduct = async (req, res) => {
       producto: newProducto,
     });
   } catch (error) {
-    console.log(error);
     res.status(400).json({ error: error });
   }
 };
@@ -63,7 +62,6 @@ export const getAllProduct = async (req, res) => {
       return res.json({ status: HTTP_NO_CONTENT, item });
     }
   } catch (error) {
-    console.log(error);
     res.status(400).json({ error: error });
   }
 };
@@ -87,14 +85,12 @@ export const getProductsByCompanyId = async (req, res) => {
       return res.json({ status: HTTP_NO_CONTENT, item });
     }
   } catch (error) {
-    console.log(error);
     res.status(400).json({ error: error });
   }
 };
 
 export const updateProductStatusById = async (req, res) => {
   const _id = req.params._id;
-  console.log("----", req.body);
   const newStatus = req.body.status; // Asegúrate de enviar el nuevo estado en el cuerpo de la solicitud
 
   try {
@@ -122,7 +118,6 @@ export const updateProductStatusById = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     res.status(HTTP_INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
 };
@@ -130,7 +125,6 @@ export const updateProductStatusById = async (req, res) => {
 // Actualizar un producto por su ID
 export const updateProductById = async (req, res) => {
   const _id = req.params._id;
-  console.log(req.params)
 
   // Extraer los campos que se pueden actualizar
   const {
@@ -184,8 +178,47 @@ export const updateProductById = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     res.status(HTTP_INTERNAL_SERVER_ERROR).json({ error: error.message });
+  }
+};
+
+export const updateStockById = async (req, res) => {
+  
+  try {
+    const { productsDetails } = req.body;
+    
+    if (productsDetails.length > 0) {
+      
+      const productos = await getSeveralProductsDetails(productsDetails);
+      
+      if (productos.length > 0) {
+        const updatedProducts = updateOperations(productos, productsDetails);
+        const result = await product.bulkWrite(updatedProducts);
+        return result;
+      }
+    }
+  } catch (error) {
+    return res.json({ status: HTTP_INTERNAL_SERVER_ERROR, error: error })
+  }
+};
+
+export const getSeveralProductsDetails = async (products) => {
+  
+  try {
+    if (products.length > 0) {
+      // Obtener solo los IDs de los productos a actualizar
+      const productIds = products.map((product) => product._id);
+      const items = await product.find({ _id: { $in: productIds } });
+      if (items.length > 0) {
+        return items;
+      } else {
+        return res.json({ status: HTTP_NO_CONTENT, items });
+      }
+    } else {
+      return res.json({ status: HTTP_INTERNAL_SERVER_ERROR });
+    }
+  } catch (error) {
+    return res.json({ status: HTTP_INTERNAL_SERVER_ERROR });
   }
 };
 

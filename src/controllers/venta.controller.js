@@ -1,5 +1,5 @@
 import Venta from "../models/venta.js";
-import { updateStockById } from "./detalleProducto.controller.js";
+import { updateStockById } from "./product.controller.js";
 
 // Constantes para códigos de estado HTTP
 const HTTP_NOT_FOUND = 404;
@@ -35,10 +35,8 @@ export const createVenta = async (req, res) => {
         status: "success",
         venta: newVenta,
       });
-    }
-    
+    }    
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ error: error });
   }
 };
@@ -73,7 +71,6 @@ export const getAllVentas = async (req, res) => {
       return res.json({ status: HTTP_NO_CONTENT, item });
     }
   } catch (error) {
-    console.log(error);
     res.status(400).json({ error: error });
   }
 };
