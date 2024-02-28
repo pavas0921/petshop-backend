@@ -10,15 +10,13 @@ const HTTP_NO_CONTENT = 204;
 
 // Crear un nuevo producto
 export const createVenta = async (req, res) => {
-  const { date, IdCliente, detalleVenta, totalVenta } = req.body;
+  const { date, idCliente, detalleVenta, payMethod, saleType, totalVenta } = req.body;
   try {
     const newVenta = await Venta.create({
-      date,
-      IdCliente,
-      detalleVenta,
-      totalVenta,
+      date, idCliente, detalleVenta, payMethod, saleType, totalVenta
     });
     if(newVenta){
+      
       const result = await updateStockById(req, res)
       if(result.modifiedCount > 0){
         return res.status(HTTP_OK).json({
@@ -37,6 +35,7 @@ export const createVenta = async (req, res) => {
       });
     }    
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ error: error });
   }
 };

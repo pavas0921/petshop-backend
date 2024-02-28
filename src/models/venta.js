@@ -5,36 +5,48 @@ const ventaSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  IdCliente: {
+  idCliente: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Customer",
     required: true,
   },
   detalleVenta: [
     {
-      detalleProducto: {
+      _id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "DetalleProducto",
+        ref: "product",
         required: true,
       },
-      nombreProducto: {
+      productImage: {
         type: String,
         required: true,
       },
-      cantidad: {
+      productName: {
+        type: String,
+        required: true,
+      },
+      qty: {
         type: Number,
         required: true,
       },
-      precioUnitario: {
+      unitPrice: {
         type: Number,
         required: true,
       },
-      precioTotal: {
+      totalPrice: {
         type: Number,
         required: true,
       },
     },
   ],
+  payMethod:{
+    type: String,
+    required: true
+  }, 
+  saleType:{
+    type: String,
+    required: true
+  },
   totalVenta: {
     type: Number,
     required: true,

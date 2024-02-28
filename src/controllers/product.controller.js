@@ -183,27 +183,22 @@ export const updateProductById = async (req, res) => {
 };
 
 export const updateStockById = async (req, res) => {
-  
   try {
-    const { productsDetails } = req.body;
-    
-    if (productsDetails.length > 0) {
-      
-      const productos = await getSeveralProductsDetails(productsDetails);
-      
+    const { detalleVenta } = req.body;
+    if (detalleVenta.length > 0) {
+      const productos = await getSeveralProductsDetails(detalleVenta);
       if (productos.length > 0) {
-        const updatedProducts = updateOperations(productos, productsDetails);
+        const updatedProducts = updateOperations(productos, detalleVenta);
         const result = await product.bulkWrite(updatedProducts);
         return result;
       }
     }
   } catch (error) {
-    return res.json({ status: HTTP_INTERNAL_SERVER_ERROR, error: error })
+    return res.json({ status: HTTP_INTERNAL_SERVER_ERROR, error: error });
   }
 };
 
 export const getSeveralProductsDetails = async (products) => {
-  
   try {
     if (products.length > 0) {
       // Obtener solo los IDs de los productos a actualizar
@@ -221,6 +216,3 @@ export const getSeveralProductsDetails = async (products) => {
     return res.json({ status: HTTP_INTERNAL_SERVER_ERROR });
   }
 };
-
-
-
