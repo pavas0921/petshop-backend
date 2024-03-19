@@ -39,7 +39,7 @@ export const createUser = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
+    console.log("ER: ", error);
     res.json({ httpStatus: HTTP_NOT_FOUND, error: error });
   }
 };
