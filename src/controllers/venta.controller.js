@@ -10,10 +10,10 @@ const HTTP_NO_CONTENT = 204;
 
 // Crear un nuevo producto
 export const createVenta = async (req, res) => {
-  const { date, idCliente, detalleVenta, payMethod, saleType, totalVenta } = req.body;
+  const { date, idCliente, detalleVenta, payMethod, saleType, totalVenta, companyId } = req.body;
   try {
     const newVenta = await Venta.create({
-      date, idCliente, detalleVenta, payMethod, saleType, totalVenta
+      date, idCliente, detalleVenta, payMethod, saleType, totalVenta, companyId
     });
     if(newVenta){
       
@@ -35,7 +35,6 @@ export const createVenta = async (req, res) => {
       });
     }    
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ error: error });
   }
 };

@@ -8,7 +8,6 @@ export const generateToken = (req, res) => {
       rolId: user.rolId,
       companyId: user.companyId,
     };
-    console.log("user****", payload)
     const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "1h" });
     res.status(200).json({ status: 200, token: token });
   } catch (error) {
