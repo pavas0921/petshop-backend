@@ -77,7 +77,10 @@ export const getAllUser = async (req, res) => {
 export const login = async (req, res, next) => {
   const { id, password } = req.body;
   try {
-    const user = await User.findOne({ id });
+    const user = await User.findOne({ id }).populate({
+      path: "companyId",
+      select: "logo",
+    });
     if (!user) {
       return res.status(404).json({ error: "Usuario no encontrado" });
     } else {
