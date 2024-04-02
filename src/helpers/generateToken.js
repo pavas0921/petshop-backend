@@ -9,7 +9,7 @@ export const generateToken = (req, res) => {
       companyId: user.companyId._id,
       logo: user.companyId.logo,
     };
-    const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "1h" });
+    const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "5h" });
     res.status(200).json({ status: 200, token: token });
   } catch (error) {
     console.log(error);
