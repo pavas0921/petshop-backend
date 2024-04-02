@@ -21,7 +21,6 @@ export const createCategoria = async (req, res) => {
 };
 
 export const getCategoria = async (req, res) => {
-  console.log("hola");
   try {
     const item = await Categoria.find().exec();
     if (item.length > 0) {
@@ -36,3 +35,22 @@ export const getCategoria = async (req, res) => {
     res.status(500).json({ error: "Error al obtener las categorias" });
   }
 };
+
+export const getCategoriaByIdCompany = async (req, res) => {
+  console.log(req.params)
+  const idCompany = req.params.idCompany
+  try {
+    const item = await Categoria.find({ idCompany: idCompany }).exec();
+    if (item.length > 0) {
+      return res.json({ httpStatus: +process.env.HTTP_OK, content: item });
+    } else {
+      return res.json({
+        httpStatus: +process.env.HTTP_NO_CONTENT,
+        content: item,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener las categorias" });
+  }
+};
+
