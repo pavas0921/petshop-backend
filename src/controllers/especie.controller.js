@@ -44,3 +44,21 @@ export const getEspecie = async (req, res) => {
     res.status(500).json({ error: "Error al obtener las Especies" });
   }
 };
+
+export const getEspecieByCompany = async (req, res) => {
+  const idCompany = req.params.idCompany
+  try {
+    const item = await Especie.find({idCompany: idCompany}).exec();
+    if (item.length > 0) {
+      return res.json({ httpStatus: +process.env.HTTP_OK, content: item });
+    } else {
+      return res.json({
+        httpStatus: +process.env.HTTP_NO_CONTENT,
+        content: item,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error al obtener las Especies" });
+  }
+};

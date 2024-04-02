@@ -37,7 +37,6 @@ export const getCategoria = async (req, res) => {
 };
 
 export const getCategoriaByIdCompany = async (req, res) => {
-  console.log(req.params)
   const idCompany = req.params.idCompany
   try {
     const item = await Categoria.find({ idCompany: idCompany }).exec();
