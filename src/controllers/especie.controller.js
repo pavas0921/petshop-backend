@@ -19,7 +19,7 @@ export const createEspecie = async (req, res) => {
     const newEspecie = await Especie.create({ name, idCompany });
     res.status(HTTP_CREATED).json({
       httpStatus: HTTP_CREATED,
-      category: newEspecie,
+      especie: newEspecie,
       message: "Especie registrada con éxito!",
     });
   } catch (error) {
