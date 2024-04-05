@@ -1,5 +1,7 @@
 import Venta from "../models/venta.js";
 import { updateStockById } from "./product.controller.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 // Constantes para códigos de estado HTTP
 const HTTP_NOT_FOUND = 404;
@@ -8,17 +10,30 @@ const HTTP_CREATED = 201;
 const HTTP_OK = 200;
 const HTTP_NO_CONTENT = 204;
 
-// Crear un nuevo producto
+// Registrar una nueva venta
 export const createVenta = async (req, res) => {
-  const { date, idCliente, detalleVenta, payMethod, saleType, totalVenta, companyId } = req.body;
+  const {
+    date,
+    idCliente,
+    detalleVenta,
+    payMethod,
+    saleType,
+    totalVenta,
+    companyId,
+  } = req.body;
   try {
     const newVenta = await Venta.create({
-      date, idCliente, detalleVenta, payMethod, saleType, totalVenta, companyId
+      date,
+      idCliente,
+      detalleVenta,
+      payMethod,
+      saleType,
+      totalVenta,
+      companyId,
     });
-    if(newVenta){
-      
-      const result = await updateStockById(req, res)
-      if(result.modifiedCount > 0){
+    if (newVenta) {
+      const result = await updateStockById(req, res);
+      if (result.modifiedCount > 0) {
         return res.status(HTTP_OK).json({
           message: "Venta registrada con éxito e inventario actualizado.",
           httpStatus: HTTP_OK,
@@ -26,49 +41,90 @@ export const createVenta = async (req, res) => {
           venta: newVenta,
         });
       }
-    }else{
+    } else {
       return res.status(HTTP_NOT_FOUND).json({
         message: "Hubo un problema al registrar la venta.",
         httpStatus: HTTP_NOT_FOUND,
         status: "success",
         venta: newVenta,
       });
-    }    
+    }
   } catch (error) {
     return res.status(500).json({ error: error });
   }
 };
 
-// Obtener todos los ventas
-export const getAllVentas = async (req, res) => {
+// Obtener todos los ventas de una compañía específica
+export const getAllVentasByCompany = async (req, res) => {
   try {
-    const item = await Venta.find()
-      .populate({
-        path: "detalleVenta",
-        populate: {
-          path: "detalleProducto",
-          model: "DetalleProducto", // Nombre del modelo
-          populate: {
-            path: "idProducto",
-            model: "Producto",
-            select: "name",
-          },
-        },
-      })
-      .exec();
-    if (item.length > 0) {
-      const computedData = item.map((item) => ({
-        idVenta: item._id,
-        cliente: item.cliente,
-        detalleVenta: item.detalleVenta,
-        precioUnitario: item.precioUnitario,
-        totalVenta: item.totalVenta,
-      }));
-      return res.json({ status: HTTP_OK, detalleVenta: computedData });
+    console.log("req", req.params);
+    // Extraer el idCompany del cuerpo de la solicitud
+    const { idCompany } = req.params;
+
+    // Buscar ventas de la compañía especificada
+    const ventas = await Venta.find({ companyId: idCompany }).exec();
+
+    // Comprobar si se encontraron ventas para la compañía especificada
+    if (ventas.length > 0) {
+      // Si se encontraron ventas, devolverlas en la respuesta con un código HTTP_OK
+      return res.json({ 
+        httpStatus: +process.env.HTTP_OK,
+        content: items,
+        status: "success",
+      });
     } else {
-      return res.json({ status: HTTP_NO_CONTENT, item });
+      // Si no se encontraron ventas, devolver un mensaje con un código HTTP_NO_CONTENT
+      return res.json({ 
+        httpStatus: +process.env.HTTP_NO_CONTENT,
+        content: [],
+        status: "success",
+       });
     }
   } catch (error) {
-    res.status(400).json({ error: error });
+    // Manejar errores y devolver un código de estado 400 con un mensaje de error
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Obtener ventas en un rango de fechas
+export const getVentasByDateRange = async (req, res) => {
+  try {
+    const { startDate, endDate, idCompany } = req.body;
+
+    // Validar las fechas de entrada
+    if (!startDate || !endDate) {
+      return res.status(400).json({
+        httpStatus: +process.env.BAD_REQUEST,
+        message: "Fecha de inicio y Fecha de finalización son obligatorias.",
+        status: "error",
+        content: [],
+      });
+    }
+
+    // Convertir las fechas de entrada a objetos Date
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+
+    // Consultar la base de datos para obtener las ventas dentro del rango de fechas
+    const items = await Venta.find({
+      date: { $gte: startDateObj, $lte: endDateObj },
+      companyId: idCompany,
+    }).exec();
+
+    if (items.length > 0) {
+      return res.json({
+        httpStatus: +process.env.HTTP_OK,
+        content: items,
+        status: "success",
+      });
+    } else {
+      return res.json({
+        httpStatus: +process.env.HTTP_NO_CONTENT,
+        content: [],
+        status: "success",
+      });
+    }
+  } catch (error) {
+    res.status(+process.env.HTTP_INTERNAL_SERVER_ERROR).json({ error: error });
   }
 };
