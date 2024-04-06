@@ -93,7 +93,7 @@ export const getVentasByDateRange = async (req, res) => {
 
     // Validar las fechas de entrada
     if (!startDate || !endDate) {
-      return res.status(400).json({
+      return res.status(+process.env.BAD_REQUEST).json({
         httpStatus: +process.env.BAD_REQUEST,
         message: "Fecha de inicio y Fecha de finalización son obligatorias.",
         status: "error",
