@@ -1,5 +1,6 @@
 import Venta from "../models/venta.js";
 import { updateStockById } from "./product.controller.js";
+import { formatVentasDates } from "../helpers/dateUtils/convertDates.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -57,7 +58,6 @@ export const createVenta = async (req, res) => {
 // Obtener todos los ventas de una compañía específica
 export const getAllVentasByCompany = async (req, res) => {
   try {
-    console.log("req", req.params);
     // Extraer el idCompany del cuerpo de la solicitud
     const { idCompany } = req.params;
 
@@ -67,18 +67,18 @@ export const getAllVentasByCompany = async (req, res) => {
     // Comprobar si se encontraron ventas para la compañía especificada
     if (ventas.length > 0) {
       // Si se encontraron ventas, devolverlas en la respuesta con un código HTTP_OK
-      return res.json({ 
+      return res.json({
         httpStatus: +process.env.HTTP_OK,
         content: items,
         status: "success",
       });
     } else {
       // Si no se encontraron ventas, devolver un mensaje con un código HTTP_NO_CONTENT
-      return res.json({ 
+      return res.json({
         httpStatus: +process.env.HTTP_NO_CONTENT,
         content: [],
         status: "success",
-       });
+      });
     }
   } catch (error) {
     // Manejar errores y devolver un código de estado 400 con un mensaje de error
@@ -111,10 +111,13 @@ export const getVentasByDateRange = async (req, res) => {
       companyId: idCompany,
     }).exec();
 
-    if (items.length > 0) {
+    // Formatear las fechas antes de enviarlas al cliente utilizando la función del archivo externo
+    const ventasFormateadas = formatVentasDates(items);
+
+    if (ventasFormateadas.length > 0) {
       return res.json({
         httpStatus: +process.env.HTTP_OK,
-        content: items,
+        content: ventasFormateadas,
         status: "success",
       });
     } else {
@@ -125,6 +128,7 @@ export const getVentasByDateRange = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error);
     res.status(+process.env.HTTP_INTERNAL_SERVER_ERROR).json({ error: error });
   }
 };
