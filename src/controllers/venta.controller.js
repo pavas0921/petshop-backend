@@ -132,3 +132,35 @@ export const getVentasByDateRange = async (req, res) => {
     res.status(+process.env.HTTP_INTERNAL_SERVER_ERROR).json({ error: error });
   }
 };
+
+//Obtener la cantidad de ventas del día
+export const getDailySalesCount = async (req, res) => {
+  try {
+    const { idCompany } = req.body;
+    const today = new Date().toISOString().split("T")[0];
+    const count = await Venta.countDocuments({
+      date: {
+        $gte: new Date(today),
+        $lte: new Date(today).setHours(23, 59, 59, 999),
+      },
+      companyId: idCompany,
+    });
+    if (count > 0) {
+      return res.json({
+        httpStatus: +process.env.HTTP_OK,
+        content: count,
+        status: "success",
+      });
+    } else {
+      return res.json({
+        httpStatus: +process.env.HTTP_NO_CONTENT,
+        content: count,
+        status: "success",
+      });
+    }
+  } catch (error) {
+    res
+      .status(+process.env.HTTP_INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
+  }
+};
