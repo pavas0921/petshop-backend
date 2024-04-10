@@ -13,7 +13,7 @@ import rolRoutes from "./routes/rol.routes.js";
 import inventoryRoutes from "./routes/inventory.routes.js";
 import muezzaSurveyRoutes from "./routes/muezzaSurvey.routes.js";
 import customerRoutes from "./routes/customer.routes.js";
-
+import supplierRoutes from "./routes/supplier.routes.js";
 
 const app = express();
 app.use(cors());
@@ -38,5 +38,5 @@ app.use("/rol", rolRoutes);
 app.use("/inventory", inventoryRoutes);
 app.use("/muezzaSurvey", muezzaSurveyRoutes);
 app.use("/customer", customerRoutes);
-
+app.use("/supplier", supplierRoutes);
 export default app;
