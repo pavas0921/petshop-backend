@@ -2,7 +2,9 @@ import Venta from "../models/venta.js";
 import { updateStockById } from "./product.controller.js";
 import { formatVentasDates } from "../helpers/dateUtils/convertDates.js";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 dotenv.config();
+const { ObjectId } = mongoose.Types; // Importar ObjectId desde mongoose.Types
 
 // Constantes para códigos de estado HTTP
 const HTTP_NOT_FOUND = 404;
@@ -134,31 +136,42 @@ export const getVentasByDateRange = async (req, res) => {
 };
 
 //Obtener la cantidad de ventas del día
-export const getDailySalesCount = async (req, res) => {
+export const getDailyTotalSales = async (req, res) => {
   try {
     const { idCompany } = req.body;
     const today = new Date().toISOString().split("T")[0];
-    const count = await Venta.countDocuments({
-      date: {
-        $gte: new Date(today),
-        $lte: new Date(today).setHours(23, 59, 59, 999),
+    const totalSales = await Venta.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: new Date(today),
+            $lte: new Date(today),
+          },
+          companyId: new ObjectId(idCompany),
+        },
       },
-      companyId: idCompany,
-    });
-    if (count > 0) {
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: "$totalVenta" }, // Usar el campo totalVenta para sumar el monto total de las ventas
+        },
+      },
+    ]);
+    if (totalSales.length > 0) {
       return res.json({
         httpStatus: +process.env.HTTP_OK,
-        content: count,
+        content: totalSales[0].totalAmount,
         status: "success",
       });
     } else {
       return res.json({
         httpStatus: +process.env.HTTP_NO_CONTENT,
-        content: count,
+        content: 0, // Si no hay ventas, devolver 0 como valor total
         status: "success",
       });
     }
   } catch (error) {
+    console.log(error);
     res
       .status(+process.env.HTTP_INTERNAL_SERVER_ERROR)
       .json({ error: error.message });
