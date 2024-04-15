@@ -60,3 +60,43 @@ export const createSupplier = async (req, res) => {
     });
   }
 };
+
+// Actualizar un proveedor por su ID
+export const updateSupplierById = async (req, res) => {
+  const _id = req.params._id;
+  // Extraer los campos que se pueden actualizar
+  const { nit, companyName, commercialAdvisor, phone, address } = req.body;
+
+  try {
+    // Buscar el proveedor por su ID y actualizar los campos proporcionados
+    const updatedSupplier = await Supplier.findByIdAndUpdate(
+      _id,
+      {
+        nit,
+        companyName,
+        commercialAdvisor,
+        phone,
+        address,
+      },
+      { new: true } // Devuelve el documento actualizado
+    );
+    // Verificar si el Proveedor existe y fue actualizado
+    if (updatedSupplier) {
+      return res.json({
+        httpStatus: +process.env.HTTP_OK,
+        message: "Proveedor actualizado con éxito",
+        status: "success",
+        updated: updatedSupplier,
+      });
+    } else {
+      // Si el clieProveedornte no existe
+      return res.status(+process.env.HTTP_NOT_FOUND).json({
+        httpStatus: +process.env.HTTP_NOT_FOUND,
+        message: "Proveedor no encontrado",
+        status: "error",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

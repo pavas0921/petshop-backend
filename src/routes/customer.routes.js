@@ -1,6 +1,9 @@
 import express from "express";
 import {
-  createCustomer, getCustomerByCompany, updateCustomerById, updateCustomerStatusById
+  createCustomer,
+  getCustomerByCompany,
+  updateCustomerById,
+  updateCustomerStatusById,
 } from "../controllers/customer.controller.js";
 
 const router = express.Router();
