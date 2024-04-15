@@ -1,12 +1,23 @@
 import mongoose from "mongoose";
 
 const supplierSchema = new mongoose.Schema({
-  name: {
+  nit: {
     type: String,
     required: true,
   },
-  nit: {
+  companyName: {
     type: String,
+    required: true,
+  },
+  commercialAdvisor: {
+    type: String,
+  },
+  phone: {
+    type: String,
+  },
+  address: {
+    type: String,
+    required: true,
   },
   idCompany: {
     type: mongoose.Schema.Types.ObjectId,

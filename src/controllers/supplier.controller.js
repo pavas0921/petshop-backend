@@ -3,13 +3,33 @@ import Supplier from "../models/supplier.js";
 import dotenv from "dotenv";
 dotenv.config();
 
+export const getAllSupplier = async (req, res) => {
+  try {
+    const item = await Supplier.find().exec();
+    if (item.length > 0) {
+      return res.json({ httpStatus: +process.env.HTTP_OK, content: item });
+    } else {
+      return res.json({
+        httpStatus: +process.env.HTTP_NO_CONTENT,
+        content: item,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener las categorias" });
+  }
+};
+
 // Crea un nuevo proveedor
 export const createSupplier = async (req, res) => {
   try {
-    const { name, nit, idCompany } = req.body;
+    const { nit, companyName, commercialAdvisor, phone, address, idCompany } =
+      req.body;
     const item = await Supplier.create({
-      name,
       nit,
+      companyName,
+      commercialAdvisor,
+      phone,
+      address,
       idCompany,
     });
 
@@ -30,6 +50,7 @@ export const createSupplier = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error);
     // Manejo de errores
     res.status(500).json({
       success: false,
