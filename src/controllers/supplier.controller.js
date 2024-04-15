@@ -3,9 +3,10 @@ import Supplier from "../models/supplier.js";
 import dotenv from "dotenv";
 dotenv.config();
 
-export const getAllSupplier = async (req, res) => {
+export const getSupplierByCompany = async (req, res) => {
+  const idCompany = req.params.idCompany;
   try {
-    const item = await Supplier.find().exec();
+    const item = await Supplier.find({ idCompany }).exec();
     if (item.length > 0) {
       return res.json({ httpStatus: +process.env.HTTP_OK, content: item });
     } else {
