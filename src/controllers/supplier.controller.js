@@ -66,7 +66,6 @@ export const updateSupplierById = async (req, res) => {
   const _id = req.params._id;
   // Extraer los campos que se pueden actualizar
   const { nit, companyName, commercialAdvisor, phone, address } = req.body;
-
   try {
     // Buscar el proveedor por su ID y actualizar los campos proporcionados
     const updatedSupplier = await Supplier.findByIdAndUpdate(

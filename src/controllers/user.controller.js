@@ -74,6 +74,36 @@ export const getAllUser = async (req, res) => {
   }
 };
 
+// Obtener todos los detalles de productos
+export const getUserByCompany = async (req, res) => {
+  const idCompany = req.params.idCompany;
+  try {
+    const item = await User.find({ companyId: idCompany })
+      .populate()
+      .populate("rolId")
+      .populate("companyId")
+      .exec();
+    if (item.length > 0) {
+      res.status(+process.env.HTTP_OK).json({
+        httpStatus: +process.env.HTTP_OK,
+        content: item,
+        status: "success",
+      });
+    } else {
+      return res.json({
+        httpStatus: +process.env.HTTP_NO_CONTENT,
+        status: "success",
+      });
+    }
+  } catch (error) {
+    res.status(+process.env.HTTP_INTERNAL_SERVER_ERROR).json({
+      httpStatus: +process.env.HTTP_INTERNAL_SERVER_ERROR,
+      status: "error",
+      message: "Se produjo un error al consultar los usuarios",
+    });
+  }
+};
+
 export const login = async (req, res, next) => {
   const { id, password } = req.body;
   try {
