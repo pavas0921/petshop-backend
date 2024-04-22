@@ -4,6 +4,7 @@ import {
   login,
   getAllUser,
   getUserByCompany,
+  updateUserById,
 } from "../controllers/user.controller.js";
 
 import { generateToken } from "../helpers/generateToken.js";
@@ -15,5 +16,5 @@ router.get("/", getAllUser);
 router.post("/", createUser);
 router.get("/:idCompany", getUserByCompany);
 router.post("/login", login, generateToken);
-
+router.put("/:_id", updateUserById);
 export default router;

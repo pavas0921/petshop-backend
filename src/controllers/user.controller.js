@@ -12,7 +12,7 @@ const BAD_REQUEST = 400;
 
 // Crear un nuevo usuario
 export const createUser = async (req, res) => {
-  const { name, lastname, id, password, rolId, companyId } = req.body;
+  const { name, lastname, id, password, rolId, companyId, status } = req.body;
   const isValidPassword = validatePassword(password);
   try {
     if (isValidPassword) {
@@ -24,6 +24,7 @@ export const createUser = async (req, res) => {
         password: hash,
         rolId,
         companyId,
+        status,
       });
       res.status(HTTP_CREATED).json({
         message: "Usuario registrado con éxito",
@@ -83,6 +84,7 @@ export const getUserByCompany = async (req, res) => {
       .populate("rolId")
       .populate("companyId")
       .exec();
+    console.log("hola", item);
     if (item.length > 0) {
       res.status(+process.env.HTTP_OK).json({
         httpStatus: +process.env.HTTP_OK,
@@ -101,6 +103,47 @@ export const getUserByCompany = async (req, res) => {
       status: "error",
       message: "Se produjo un error al consultar los usuarios",
     });
+  }
+};
+
+// Actualizar un usuario por su ID
+export const updateUserById = async (req, res) => {
+  const _id = req.params._id;
+  // Extraer los campos que se pueden actualizar
+  const { name, lastname, id, password, rolId, companyId, status } = req.body;
+  try {
+    // Buscar el proveedor por su ID y actualizar los campos proporcionados
+    const updatedUser = await User.findByIdAndUpdate(
+      _id,
+      {
+        name,
+        lastname,
+        id,
+        password,
+        rolId,
+        companyId,
+        status,
+      },
+      { new: true } // Devuelve el documento actualizado
+    );
+    // Verificar si el Usuario existe y fue actualizado
+    if (updatedUser) {
+      return res.json({
+        httpStatus: +process.env.HTTP_OK,
+        message: "Usuario actualizado con éxito",
+        status: "success",
+        updated: updatedUser,
+      });
+    } else {
+      // Si el Usuario no existe
+      return res.status(+process.env.HTTP_NOT_FOUND).json({
+        httpStatus: +process.env.HTTP_NOT_FOUND,
+        message: "Usuario no encontrado",
+        status: "error",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
