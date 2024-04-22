@@ -5,6 +5,7 @@ import {
   getAllUser,
   getUserByCompany,
   updateUserById,
+  updateUserStatus,
 } from "../controllers/user.controller.js";
 
 import { generateToken } from "../helpers/generateToken.js";
@@ -17,4 +18,5 @@ router.post("/", createUser);
 router.get("/:idCompany", getUserByCompany);
 router.post("/login", login, generateToken);
 router.put("/:_id", updateUserById);
+router.patch("/:_id", updateUserStatus);
 export default router;

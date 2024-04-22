@@ -84,7 +84,6 @@ export const getUserByCompany = async (req, res) => {
       .populate("rolId")
       .populate("companyId")
       .exec();
-    console.log("hola", item);
     if (item.length > 0) {
       res.status(+process.env.HTTP_OK).json({
         httpStatus: +process.env.HTTP_OK,
@@ -170,5 +169,41 @@ export const login = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: true });
+  }
+};
+
+// Actualizar el estado de un usuario
+export const updateUserStatus = async (req, res) => {
+  const _id = req.params._id;
+  const newStatus = req.body.status; // Asegúrate de enviar el nuevo estado en el cuerpo de la solicitud
+
+  try {
+    // Buscar el producto por su ID y actualizar el estado
+    const updatedProduct = await User.findByIdAndUpdate(
+      _id,
+      { status: newStatus },
+      { new: true } // Devuelve el documento actualizado
+    );
+    console.log(updatedProduct);
+
+    // Verificar si el producto existe y fue actualizado
+    if (updatedProduct) {
+      return res.json({
+        httpStatus: HTTP_OK,
+        message: "Estado del producto actualizado con éxito",
+        status: "success",
+        updated: updatedProduct,
+      });
+    } else {
+      // Si el producto no existe
+      return res.status(HTTP_NOT_FOUND).json({
+        httpStatus: HTTP_NOT_FOUND,
+        message: "Producto no encontrado",
+        status: "error",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(HTTP_INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
 };
