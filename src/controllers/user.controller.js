@@ -125,13 +125,17 @@ export const updateUserById = async (req, res) => {
       },
       { new: true } // Devuelve el documento actualizado
     );
+
     // Verificar si el Usuario existe y fue actualizado
     if (updatedUser) {
+      const user = await User.findOne({ _id })
+        .populate("rolId")
+        .populate("companyId");
       return res.json({
         httpStatus: +process.env.HTTP_OK,
         message: "Usuario actualizado con éxito",
         status: "success",
-        updated: updatedUser,
+        updated: user,
       });
     } else {
       // Si el Usuario no existe
