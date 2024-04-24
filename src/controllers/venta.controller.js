@@ -4,7 +4,6 @@ import { formatVentasDates } from "../helpers/dateUtils/convertDates.js";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 dotenv.config();
-const { ObjectId } = mongoose.Types; // Importar ObjectId desde mongoose.Types
 
 // Constantes para códigos de estado HTTP
 const HTTP_NOT_FOUND = 404;

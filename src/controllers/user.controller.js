@@ -1,14 +1,8 @@
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import { validatePassword } from "../helpers/validatePassword.js";
-
-// Constantes para códigos de estado HTTP
-const HTTP_NOT_FOUND = 404;
-const HTTP_INTERNAL_SERVER_ERROR = 500;
-const HTTP_CREATED = 201;
-const HTTP_OK = 200;
-const HTTP_NO_CONTENT = 204;
-const BAD_REQUEST = 400;
+import dotenv from "dotenv";
+dotenv.config();
 
 // Crear un nuevo usuario
 export const createUser = async (req, res) => {
@@ -158,16 +152,31 @@ export const login = async (req, res, next) => {
       select: "logo",
     });
     if (!user) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
+      return res.status(+process.env.HTTP_UNAUTHORIZED).json({
+        message: "Documento y/o contraseña incorrectos.",
+        httpStatus: +process.env.HTTP_UNAUTHORIZED,
+        status: "error",
+      });
     } else {
       const isValidUser = bcrypt.compareSync(password, user.password); // true
       if (isValidUser) {
-        req.body.user = user;
-        next();
+        if (user.status) {
+          req.body.user = user;
+          next();
+        } else {
+          return res.status(+process.env.HTTP_UNAUTHORIZED).json({
+            message:
+              "Hay un problema con el inicio de sesión, por favor contacte al equipo de soporte.",
+            httpStatus: +process.env.HTTP_UNAUTHORIZED,
+            status: "error",
+          });
+        }
       } else {
-        res
-          .status(401)
-          .json({ error: true, message: "User or password incorrect" });
+        return res.status(+process.env.HTTP_UNAUTHORIZED).json({
+          message: "Documento y/o contraseña incorrectos.",
+          httpStatus: +process.env.HTTP_UNAUTHORIZED,
+          status: "error",
+        });
       }
     }
   } catch (error) {
