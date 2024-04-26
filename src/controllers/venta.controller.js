@@ -3,6 +3,7 @@ import { updateStockById } from "./product.controller.js";
 import { formatVentasDates } from "../helpers/dateUtils/convertDates.js";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import { ObjectId } from "mongodb";
 dotenv.config();
 
 // Constantes para códigos de estado HTTP
@@ -138,7 +139,9 @@ export const getVentasByDateRange = async (req, res) => {
 export const getDailyTotalSales = async (req, res) => {
   try {
     const { idCompany } = req.body;
+    console.log(idCompany);
     const today = new Date().toISOString().split("T")[0];
+    console.log(new Date(today));
     const totalSales = await Venta.aggregate([
       {
         $match: {
@@ -156,6 +159,7 @@ export const getDailyTotalSales = async (req, res) => {
         },
       },
     ]);
+    console.log(totalSales);
     if (totalSales.length > 0) {
       return res.json({
         httpStatus: +process.env.HTTP_OK,
