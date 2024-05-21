@@ -17,10 +17,6 @@ const ventaSchema = new mongoose.Schema({
         ref: "product",
         required: true,
       },
-      productImage: {
-        type: String,
-        required: true,
-      },
       productName: {
         type: String,
         required: true,
@@ -39,13 +35,13 @@ const ventaSchema = new mongoose.Schema({
       },
     },
   ],
-  payMethod:{
+  payMethod: {
     type: String,
-    required: true
-  }, 
-  saleType:{
+    required: true,
+  },
+  saleType: {
     type: String,
-    required: true
+    required: true,
   },
   totalVenta: {
     type: Number,
@@ -56,7 +52,7 @@ const ventaSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Company",
     required: true,
-  }
+  },
 });
 
 const Venta = mongoose.model("Venta", ventaSchema);
