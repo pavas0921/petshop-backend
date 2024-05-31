@@ -111,7 +111,9 @@ export const getVentasByDateRange = async (req, res) => {
     const items = await Venta.find({
       date: { $gte: startDateObj, $lte: endDateObj },
       companyId: idCompany,
-    }).exec();
+    })
+      .populate("idCliente")
+      .exec();
 
     // Formatear las fechas antes de enviarlas al cliente utilizando la función del archivo externo
     const ventasFormateadas = formatVentasDates(items);
