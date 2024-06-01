@@ -1,4 +1,5 @@
 import Venta from "../models/venta.js";
+import moment from "moment";
 import { updateStockById } from "./product.controller.js";
 import { formatVentasDates } from "../helpers/dateUtils/convertDates.js";
 import dotenv from "dotenv";
@@ -115,13 +116,21 @@ export const getVentasByDateRange = async (req, res) => {
       .populate("idCliente")
       .exec();
 
-    // Formatear las fechas antes de enviarlas al cliente utilizando la función del archivo externo
-    const ventasFormateadas = formatVentasDates(items);
+    const computedSales = items.map((item) => ({
+      _id: item._id,
+      date: moment(item.date).format("DD/MM/YYYY"),
+      payMethod: item.payMethod,
+      saleType: item.saleType,
+      totalVenta: item.totalVenta,
+      cliente: item.idCliente._id,
+      fullName: item.idCliente.firstName + " " + item.idCliente.lastName,
+      detalleVenta: item.detalleVenta,
+    }));
 
-    if (ventasFormateadas.length > 0) {
+    if (computedSales.length > 0) {
       return res.json({
         httpStatus: +process.env.HTTP_OK,
-        content: ventasFormateadas,
+        content: computedSales,
         status: "success",
       });
     } else {
@@ -132,7 +141,6 @@ export const getVentasByDateRange = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     res.status(+process.env.HTTP_INTERNAL_SERVER_ERROR).json({ error: error });
   }
 };
@@ -141,9 +149,7 @@ export const getVentasByDateRange = async (req, res) => {
 export const getDailyTotalSales = async (req, res) => {
   try {
     const { idCompany } = req.body;
-    console.log(idCompany);
     const today = new Date().toISOString().split("T")[0];
-    console.log(new Date(today));
     const totalSales = await Venta.aggregate([
       {
         $match: {
@@ -161,7 +167,6 @@ export const getDailyTotalSales = async (req, res) => {
         },
       },
     ]);
-    console.log(totalSales);
     if (totalSales.length > 0) {
       return res.json({
         httpStatus: +process.env.HTTP_OK,
@@ -176,7 +181,6 @@ export const getDailyTotalSales = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     res
       .status(+process.env.HTTP_INTERNAL_SERVER_ERROR)
       .json({ error: error.message });
