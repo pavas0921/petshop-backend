@@ -148,14 +148,13 @@ export const getVentasByDateRange = async (req, res) => {
 //Obtener la cantidad de ventas del día
 export const getDailyTotalSales = async (req, res) => {
   try {
-    const { idCompany } = req.body;
-    const today = new Date().toISOString().split("T")[0];
+    const { idCompany, date } = req.body;
     const totalSales = await Venta.aggregate([
       {
         $match: {
           date: {
-            $gte: new Date(today),
-            $lte: new Date(today),
+            $gte: new Date(date),
+            $lte: new Date(date),
           },
           companyId: new ObjectId(idCompany),
         },
