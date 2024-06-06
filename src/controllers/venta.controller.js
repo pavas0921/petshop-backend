@@ -107,6 +107,8 @@ export const getVentasByDateRange = async (req, res) => {
     // Convertir las fechas de entrada a objetos Date
     const startDateObj = new Date(startDate);
     const endDateObj = new Date(endDate);
+    console.log("start: ", startDateObj);
+    console.log("end: ", endDateObj);
 
     // Consultar la base de datos para obtener las ventas dentro del rango de fechas
     const items = await Venta.find({
@@ -149,12 +151,14 @@ export const getVentasByDateRange = async (req, res) => {
 export const getDailyTotalSales = async (req, res) => {
   try {
     const { idCompany, date } = req.body;
+    const endDate = new Date(date);
+    endDate.setUTCHours(23, 59, 59, 999);
     const totalSales = await Venta.aggregate([
       {
         $match: {
           date: {
             $gte: new Date(date),
-            $lte: new Date(date),
+            $lte: endDate,
           },
           companyId: new ObjectId(idCompany),
         },
