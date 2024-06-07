@@ -1,5 +1,6 @@
 import Venta from "../models/venta.js";
-import moment from "moment";
+//import moment from "moment";
+import moment from "moment-timezone";
 import { updateStockById } from "./product.controller.js";
 import { formatVentasDates } from "../helpers/dateUtils/convertDates.js";
 import dotenv from "dotenv";
@@ -25,9 +26,25 @@ export const createVenta = async (req, res) => {
     totalVenta,
     companyId,
   } = req.body;
+
+  // Crear un objeto moment a partir de la fecha recibida y ajustar a la hora actual de Colombia
+  const receivedDate = moment(date).tz("America/Bogota");
+
+  // Obtener la hora actual de Colombia y ajustar la fecha recibida
+  const currentTimeInColombia = moment().tz("America/Bogota");
+
+  // Ajustar la hora de receivedDate a la hora actual en Colombia
+  receivedDate.set({
+    hour: currentTimeInColombia.hour(),
+    minute: currentTimeInColombia.minute(),
+    second: currentTimeInColombia.second(),
+    millisecond: currentTimeInColombia.millisecond(),
+  });
+
+  //console.log(receivedDate.toDate()); // Convertir a Date para mostrar en consola
   try {
     const newVenta = await Venta.create({
-      date,
+      date: new Date(receivedDate.toDate()),
       idCliente,
       detalleVenta,
       payMethod,
@@ -107,6 +124,7 @@ export const getVentasByDateRange = async (req, res) => {
     // Convertir las fechas de entrada a objetos Date
     const startDateObj = new Date(startDate);
     const endDateObj = new Date(endDate);
+    endDateObj.setUTCHours(23, 59, 59, 999);
     console.log("start: ", startDateObj);
     console.log("end: ", endDateObj);
 
@@ -120,7 +138,7 @@ export const getVentasByDateRange = async (req, res) => {
 
     const computedSales = items.map((item) => ({
       _id: item._id,
-      date: moment(item.date).format("DD/MM/YYYY"),
+      date: moment(item.date).tz("America/Bogota").format("DD/MM/YYYY"),
       payMethod: item.payMethod,
       saleType: item.saleType,
       totalVenta: item.totalVenta,
@@ -129,6 +147,7 @@ export const getVentasByDateRange = async (req, res) => {
       detalleVenta: item.detalleVenta,
     }));
 
+    console.log("items: ", computedSales);
     if (computedSales.length > 0) {
       return res.json({
         httpStatus: +process.env.HTTP_OK,
