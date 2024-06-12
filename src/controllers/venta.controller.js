@@ -27,24 +27,11 @@ export const createVenta = async (req, res) => {
     companyId,
   } = req.body;
 
-  // Crear un objeto moment a partir de la fecha recibida y ajustar a la hora actual de Colombia
-  const receivedDate = moment(date).tz("America/Bogota");
+  const convertedDate = moment(date, "YYYY-MM-DD").startOf("day").toISOString();
 
-  // Obtener la hora actual de Colombia y ajustar la fecha recibida
-  const currentTimeInColombia = moment().tz("America/Bogota");
-
-  // Ajustar la hora de receivedDate a la hora actual en Colombia
-  receivedDate.set({
-    hour: currentTimeInColombia.hour(),
-    minute: currentTimeInColombia.minute(),
-    second: currentTimeInColombia.second(),
-    millisecond: currentTimeInColombia.millisecond(),
-  });
-
-  //console.log(receivedDate.toDate()); // Convertir a Date para mostrar en consola
   try {
     const newVenta = await Venta.create({
-      date: new Date(receivedDate.toDate()),
+      date: convertedDate,
       idCliente,
       detalleVenta,
       payMethod,
