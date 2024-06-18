@@ -27,8 +27,12 @@ export const createVenta = async (req, res) => {
     companyId,
   } = req.body;
 
+  console.log("dateReq", date);
+
   // Convertir la fecha recibida a un objeto Moment
   let convertedDate = moment(date, "YYYY-MM-DD");
+
+  console.log("dateMoment", convertedDate);
 
   // Ajustar la fecha a la hora actual de Colombia
   convertedDate = convertedDate.tz("America/Bogota").set({
@@ -37,6 +41,9 @@ export const createVenta = async (req, res) => {
     second: moment.tz("America/Bogota").second(),
     millisecond: moment.tz("America/Bogota").millisecond(),
   });
+
+  console.log("utc", convertedDate.toDate());
+  console.log("isoDate", convertedDate.toISOString());
 
   try {
     const newVenta = await Venta.create({
