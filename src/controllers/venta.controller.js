@@ -27,11 +27,22 @@ export const createVenta = async (req, res) => {
     companyId,
   } = req.body;
 
-  const convertedDate = moment(date, "YYYY-MM-DD").startOf("day").toISOString();
+  // Convertir la fecha recibida a un objeto Moment
+  let convertedDate = moment(date, "YYYY-MM-DD");
+
+  // Ajustar la fecha a la hora actual de Colombia
+  convertedDate = convertedDate.tz("America/Bogota").set({
+    hour: moment.tz("America/Bogota").hour(),
+    minute: moment.tz("America/Bogota").minute(),
+    second: moment.tz("America/Bogota").second(),
+    millisecond: moment.tz("America/Bogota").millisecond(),
+  });
+
+  console.log(convertedDate.toISOString());
 
   try {
     const newVenta = await Venta.create({
-      date: convertedDate,
+      date: convertedDate.toISOString(),
       idCliente,
       detalleVenta,
       payMethod,
