@@ -30,7 +30,7 @@ export const createVenta = async (req, res) => {
   console.log("dateReq", date);
 
   // Convertir la fecha recibida a un objeto Moment
-  let convertedDate = moment(date, "YYYY-MM-DD");
+  let convertedDate = moment.tz(date, "YYYY-MM-DD", "America/Bogota");
 
   console.log("dateMoment", convertedDate);
 
