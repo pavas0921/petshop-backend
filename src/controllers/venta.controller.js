@@ -42,6 +42,8 @@ export const createVenta = async (req, res) => {
     millisecond: moment.tz("America/Bogota").millisecond(),
   });
 
+  console.log("horaColombia", convertedDate);
+
   console.log("utc", convertedDate.toDate());
   console.log("isoDate", convertedDate.toISOString());
 
