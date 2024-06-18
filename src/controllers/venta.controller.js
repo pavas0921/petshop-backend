@@ -38,8 +38,6 @@ export const createVenta = async (req, res) => {
     millisecond: moment.tz("America/Bogota").millisecond(),
   });
 
-  console.log(convertedDate.toISOString());
-
   try {
     const newVenta = await Venta.create({
       date: convertedDate.toISOString(),
@@ -118,17 +116,20 @@ export const getVentasByDateRange = async (req, res) => {
         content: [],
       });
     }
+    const startDay = moment
+      .tz(startDate, "YYYY-MM-DD", "America/Bogota")
+      .startOf("day");
+    const endDay = moment
+      .tz(endDate, "YYYY-MM-DD", "America/Bogota")
+      .endOf("day");
 
-    // Convertir las fechas de entrada a objetos Date
-    const startDateObj = new Date(startDate);
-    const endDateObj = new Date(endDate);
-    endDateObj.setUTCHours(23, 59, 59, 999);
-    console.log("start: ", startDateObj);
-    console.log("end: ", endDateObj);
+    // const startDateObj = new Date(startDate);
+    // const endDateObj = new Date(endDate);
+    // endDateObj.setUTCHours(23, 59, 59, 999);
 
     // Consultar la base de datos para obtener las ventas dentro del rango de fechas
     const items = await Venta.find({
-      date: { $gte: startDateObj, $lte: endDateObj },
+      date: { $gte: startDay.toDate(), $lte: endDay.toDate() },
       companyId: idCompany,
     })
       .populate("idCliente")
@@ -145,7 +146,6 @@ export const getVentasByDateRange = async (req, res) => {
       detalleVenta: item.detalleVenta,
     }));
 
-    console.log("items: ", computedSales);
     if (computedSales.length > 0) {
       return res.json({
         httpStatus: +process.env.HTTP_OK,
@@ -168,14 +168,15 @@ export const getVentasByDateRange = async (req, res) => {
 export const getDailyTotalSales = async (req, res) => {
   try {
     const { idCompany, date } = req.body;
-    const endDate = new Date(date);
-    endDate.setUTCHours(23, 59, 59, 999);
+    const startDay = moment.tz("America/Bogota").startOf("day");
+    const endDay = moment.tz("America/Bogota").endOf("day");
+
     const totalSales = await Venta.aggregate([
       {
         $match: {
           date: {
-            $gte: new Date(date),
-            $lte: endDate,
+            $gte: startDay.toDate(),
+            $lte: endDay.toDate(),
           },
           companyId: new ObjectId(idCompany),
         },
