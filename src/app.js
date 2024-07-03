@@ -14,6 +14,9 @@ import inventoryRoutes from "./routes/inventory.routes.js";
 import muezzaSurveyRoutes from "./routes/muezzaSurvey.routes.js";
 import customerRoutes from "./routes/customer.routes.js";
 import supplierRoutes from "./routes/supplier.routes.js";
+import expensesRoutes from "./routes/expenses.routes.js";
+import { createExpense } from "./controllers/expense.controller.js";
+import categoryExpensesRoutes from "./routes/categoryExpenses.routes.js";
 
 const app = express();
 app.use(cors());
@@ -39,4 +42,6 @@ app.use("/inventory", inventoryRoutes);
 app.use("/muezzaSurvey", muezzaSurveyRoutes);
 app.use("/customer", customerRoutes);
 app.use("/supplier", supplierRoutes);
+app.use("/expense", expensesRoutes);
+app.use("/categoryExpenses", categoryExpensesRoutes);
 export default app;
