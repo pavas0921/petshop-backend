@@ -24,7 +24,7 @@ const expensesSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  idCompany: {
+  idSupplier: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Supplier",
   },
