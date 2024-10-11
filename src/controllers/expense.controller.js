@@ -45,9 +45,9 @@ export const createExpense = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(process.env.HTTP_INTERNAL_SERVER_ERROR).json({
+    res.status(+process.env.HTTP_INTERNAL_SERVER_ERROR).json({
       error: error,
-      httpStatus: process.env.HTTP_INTERNAL_SERVER_ERROR,
+      httpStatus: +process.env.HTTP_INTERNAL_SERVER_ERROR,
     });
   }
 };

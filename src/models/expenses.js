@@ -6,7 +6,8 @@ const expensesSchema = new mongoose.Schema({
     required: true,
   },
   category: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "expensesCategory",
   },
   cost: {
     type: Number,
@@ -17,10 +18,6 @@ const expensesSchema = new mongoose.Schema({
     required: true,
   },
   paymentMethod: {
-    type: String,
-    required: true,
-  },
-  paymentStatus: {
     type: String,
     required: true,
   },
@@ -35,6 +32,6 @@ const expensesSchema = new mongoose.Schema({
   },
 });
 
-const Expenses = mongoose.model("Expenses", expensesSchema);
+const Expenses = mongoose.model("expenses", expensesSchema);
 
 export default Expenses;
