@@ -30,11 +30,24 @@ export const createExpense = async (req, res) => {
       idCompany,
     });
     if (newExpense) {
+      let populatedExpense = await Expenses.findById(newExpense._id)
+        .populate("idSupplier")
+        .populate("idCompany")
+        .populate("category");
+
+      // Creamos un nuevo objeto con la fecha formateada
+      const computedExpense = {
+        ...populatedExpense.toObject(), // Convertimos a objeto plano para evitar problemas de mutación
+        date: moment(populatedExpense.date)
+          .tz("America/Bogota")
+          .format("DD/MM/YYYY"),
+      };
+
       return res.status(+process.env.HTTP_CREATED).json({
         message: "Gasto registrado con éxito.",
         httpStatus: +process.env.HTTP_CREATED,
         status: "success",
-        gasto: newExpense,
+        content: computedExpense,
       });
     } else {
       return res.status(+process.env.BAD_REQUEST).json({
@@ -56,7 +69,6 @@ export const getAllExpensesByCompany = async (req, res) => {
   try {
     // Extraer el idCompany del cuerpo de la solicitud
     const { idCompany } = req.params;
-    console.log(idCompany);
     // Buscar gastos de la compañía especificada
     const expenses = await Expenses.find({ idCompany: idCompany })
       .populate("category", "category_name")
@@ -74,16 +86,20 @@ export const getAllExpensesByCompany = async (req, res) => {
     //   detalleVenta: item.detalleVenta,
     // }));
 
-    expenses.date = moment(expenses.date)
-      .tz("America/Bogota")
-      .format("DD/MM/YYYY");
-
     // Comprobar si se encontraron gastos para la compañía especificada
     if (expenses.length > 0) {
       // Si se encontraron gastos, devolverlas en la respuesta con un código HTTP_OK
+
+      const formattedExpenses = expenses.map((expense) => {
+        return {
+          ...expense._doc,
+          date: new Date(expense.date).toLocaleDateString("es-ES"),
+        };
+      });
+
       return res.status(+process.env.HTTP_OK).json({
         httpStatus: +process.env.HTTP_OK,
-        content: expenses,
+        content: formattedExpenses,
         status: "success",
       });
     } else {

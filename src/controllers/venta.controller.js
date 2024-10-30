@@ -1,11 +1,7 @@
 import Venta from "../models/venta.js";
-//import moment from "moment";
 import moment from "moment-timezone";
 import { updateStockById } from "./product.controller.js";
-import { formatVentasDates } from "../helpers/dateUtils/convertDates.js";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
-import { ObjectId } from "mongodb";
 dotenv.config();
 
 // Constantes para códigos de estado HTTP
