@@ -177,6 +177,9 @@ export const getDailyTotalSales = async (req, res) => {
     const startDay = moment.tz("America/Bogota").startOf("day");
     const endDay = moment.tz("America/Bogota").endOf("day");
 
+    const startYesterday = moment.tz("America/Bogota").subtract(1, "day").startOf("day");
+    const endYesterday = moment.tz("America/Bogota").subtract(1, "day").endOf("day");
+
     const totalSales = await Venta.aggregate([
       {
         $facet: {
@@ -231,7 +234,9 @@ export const getDailyTotalSales = async (req, res) => {
     if (totalSales.length > 0) {
       return res.json({
         httpStatus: +process.env.HTTP_OK,
-        content: totalSales[0].totalAmount,
+        content: {
+          totalToday, totalYesterday
+        },
         status: "success",
       });
     } else {
