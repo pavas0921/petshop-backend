@@ -1,6 +1,7 @@
 import Venta from "../models/venta.js";
 import moment from "moment-timezone";
 import { updateStockById } from "./product.controller.js";
+import { ObjectId } from "mongodb";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -207,6 +208,7 @@ export const getDailyTotalSales = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error)
     res
       .status(+process.env.HTTP_INTERNAL_SERVER_ERROR)
       .json({ error: error.message });
