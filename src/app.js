@@ -18,7 +18,11 @@ import expensesRoutes from "./routes/expenses.routes.js";
 import categoryExpensesRoutes from "./routes/categoryExpenses.routes.js";
 
 const app = express();
-app.use(cors());
+// Configura CORS para permitir solo solicitudes desde tu dominio en Netlify
+app.use(cors({
+  origin: "https://wondrous-sorbet-f09828.netlify.app/", // Reemplaza con el dominio de tu app en Netlify
+  credentials: true, // Permite el uso de cookies y headers de autenticación
+}));
 
 //Middleware
 app.use(express.json());
