@@ -179,21 +179,55 @@ export const getDailyTotalSales = async (req, res) => {
 
     const totalSales = await Venta.aggregate([
       {
-        $match: {
-          date: {
-            $gte: startDay.toDate(),
-            $lte: endDay.toDate(),
-          },
-          companyId: new ObjectId(idCompany),
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          totalAmount: { $sum: "$totalVenta" }, // Usar el campo totalVenta para sumar el monto total de las ventas
+        $facet: {
+          todaySales: [
+            {
+              $match: {
+                date: {
+                  $gte: startDay.toDate(),
+                  $lte: endDay.toDate(),
+                },
+                companyId: new ObjectId(idCompany),
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                totalAmountHoy: { $sum: "$totalVenta" }, // Usar el campo totalVenta para sumar el monto total de las ventas
+              },
+            },
+          ],
+          yesterdaySales: [
+            {
+              $match: {
+                date: {
+                  $gte: startYesterday.toDate(),
+                  $lte: endYesterday.toDate(),
+                },
+                companyId: new ObjectId(idCompany),
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                totalAmountAyer: { $sum: "$totalVenta" },
+              },
+            },
+          ],
         },
       },
     ]);
+
+    const totalToday = totalSales[0].todaySales[0]
+      ? totalSales[0].todaySales[0].totalAmountHoy
+      : 0;
+
+    const totalYesterday = totalSales[0].yesterdaySales[0]
+      ? totalSales[0].yesterdaySales[0].totalAmountAyer
+      : 0;
+
+    console.log("totalToday", totalToday);
+    console.log("totalYesterday", totalYesterday);
     if (totalSales.length > 0) {
       return res.json({
         httpStatus: +process.env.HTTP_OK,
@@ -208,7 +242,6 @@ export const getDailyTotalSales = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error)
     res
       .status(+process.env.HTTP_INTERNAL_SERVER_ERROR)
       .json({ error: error.message });
