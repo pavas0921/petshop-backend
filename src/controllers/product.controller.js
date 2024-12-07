@@ -76,6 +76,7 @@ export const getProductsByCompanyId = async (req, res) => {
       .populate("idEspecie")
       .exec();
     if (item.length > 0) {
+      console.log(item)
       return res.json({
         httpStatus: HTTP_OK,
         content: item,
@@ -89,6 +90,28 @@ export const getProductsByCompanyId = async (req, res) => {
   }
 };
 
+export const getActiveProductsByCompany = async (req, res) => {
+  const idCompany = req.params.idCompany;
+  try {
+    const item = await product
+    .find({ idCompany: idCompany, status: true })
+    .populate("idCategoria")
+    .populate("idEspecie")
+    .exec();
+    if (item.length > 0) {
+      return res.json({
+        httpStatus: HTTP_OK,
+        content: item,
+        status: "success",
+      });
+    } else {
+      return res.json({ status: HTTP_NO_CONTENT, item });
+    }
+  }catch{
+    res.status(500).json({ error: error });
+  }
+}
+
 export const updateProductStatusById = async (req, res) => {
   const _id = req.params._id;
   const newStatus = req.body.status; // Asegúrate de enviar el nuevo estado en el cuerpo de la solicitud
@@ -100,7 +123,7 @@ export const updateProductStatusById = async (req, res) => {
       { status: newStatus },
       { new: true } // Devuelve el documento actualizado
     );
-
+console.log(updatedProduct)
     // Verificar si el producto existe y fue actualizado
     if (updatedProduct) {
       return res.json({
