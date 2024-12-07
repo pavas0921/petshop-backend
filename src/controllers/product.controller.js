@@ -76,7 +76,6 @@ export const getProductsByCompanyId = async (req, res) => {
       .populate("idEspecie")
       .exec();
     if (item.length > 0) {
-      console.log(item)
       return res.json({
         httpStatus: HTTP_OK,
         content: item,
