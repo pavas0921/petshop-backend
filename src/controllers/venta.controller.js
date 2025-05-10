@@ -60,7 +60,6 @@ export const createVenta = async (req, res) => {
       if (result.modifiedCount > 0) {
 
         const customer = await getCustomerById(idCliente);
-        console.log("customer", customer);
         newVenta.customer = customer;
         return res.status(HTTP_OK).json({
           message: "Venta registrada con éxito e inventario actualizado.",
