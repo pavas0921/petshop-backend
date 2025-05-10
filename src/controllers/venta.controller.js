@@ -1,4 +1,5 @@
 import Venta from "../models/venta.js";
+import Customer from "../models/customer.js";
 import moment from "moment-timezone";
 import { updateStockById } from "./product.controller.js";
 import { ObjectId } from "mongodb";
@@ -57,11 +58,16 @@ export const createVenta = async (req, res) => {
     if (newVenta) {
       const result = await updateStockById(req, res);
       if (result.modifiedCount > 0) {
+
+        const customer = await getCustomerById(idCliente);
+        console.log("customer", customer);
+        newVenta.customer = customer;
         return res.status(HTTP_OK).json({
           message: "Venta registrada con éxito e inventario actualizado.",
           httpStatus: HTTP_OK,
           status: "success",
           venta: newVenta,
+          customer: customer,
         });
       }
     } else {
@@ -141,13 +147,15 @@ export const getVentasByDateRange = async (req, res) => {
       .populate("idCliente")
       .exec();
 
+      console.log(items);
+
     const computedSales = items.map((item) => ({
       _id: item._id,
       date: moment(item.date).tz("America/Bogota").format("DD/MM/YYYY"),
       payMethod: item.payMethod,
       saleType: item.saleType,
       totalVenta: item.totalVenta,
-      cliente: item.idCliente._id,
+      cliente: item.idCliente,
       fullName: item.idCliente.firstName + " " + item.idCliente.lastName,
       detalleVenta: item.detalleVenta,
     }));
@@ -252,3 +260,13 @@ export const getDailyTotalSales = async (req, res) => {
       .json({ error: error.message });
   }
 };
+
+export const getCustomerById = async (_id) => {
+  try {
+    const customer = await Customer.findById(_id);
+    return customer;
+  } catch (error) {
+    console.error("Error al obtener el cliente:", error);
+    throw error; // Propagar el error para que pueda ser manejado por el llamador
+  }
+}

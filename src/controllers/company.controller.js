@@ -7,6 +7,7 @@ export const createCompany = async (req, res) => {
     const newCompany = await Company.create({ company, categoryId, address, city, responsibleName, responsibleId, responsibleEmail, responsiblePhone, nit, logo });
     res.status(201).json(newCompany);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: error });
   }
 };
@@ -20,3 +21,7 @@ export const getAllCompanies = async (req, res) => {
     res.status(500).json({ error: "Error al obtener las categorias" });
   }
 };
+
+
+
+

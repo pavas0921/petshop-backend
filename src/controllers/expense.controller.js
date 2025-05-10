@@ -2,6 +2,7 @@ import Expenses from "../models/expenses.js";
 import moment from "moment-timezone";
 import dotenv from "dotenv";
 import { ObjectId } from "mongodb";
+import { getDateRangeWithTimezone } from "../helpers/dateUtils/dataRanges.js";
 dotenv.config();
 
 // Crear un nuevo gasto
@@ -213,3 +214,42 @@ export const getDailyTotalExpenses = async (req, res) => {
       .json({ error: error.message });
   }
 };
+
+export const getExpensesByDateRange = async (req, res) =>{
+  const {startDate, endDate, idCompany} = req.body;
+
+  // Validar las fechas de entrada
+  if (!startDate || !endDate) {
+    return res.status(+process.env.BAD_REQUEST).json({
+      httpStatus: +process.env.BAD_REQUEST,
+      message: "Fecha de inicio y Fecha de finalización son obligatorias.",
+      status: "error",
+      content: [],
+    });
+  }
+
+  const dateRange = getDateRangeWithTimezone(startDate, endDate);
+  const startDay = dateRange.startDate
+  const endDay = dateRange.endDate
+
+  const items = await Expenses.find({
+    date: {$gte: startDay.toDate(), $lte: endDay.toDate() }, 
+    companyId: idCompany,
+  })
+  .populate("idSupplier")
+  .exec();
+
+  if(items.length > 0 ){
+    return res.json({
+      httpStatus: +process.env.HTTP_OK,
+        content: items,
+        status: "success",
+    })
+  }else{
+    return res.json({
+      httpStatus: +process.env.HTTP_NO_CONTENT,
+      content: [],
+      status: "success",
+    });
+  }
+}
