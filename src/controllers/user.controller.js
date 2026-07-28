@@ -6,36 +6,60 @@ dotenv.config();
 
 // Crear un nuevo usuario
 export const createUser = async (req, res) => {
+  // Constantes para códigos de estado HTTP
+  const HTTP_NOT_FOUND = 404;
+  const HTTP_INTERNAL_SERVER_ERROR = 500;
+  const HTTP_CREATED = 201;
+  const HTTP_OK = 200;
+  const HTTP_NO_CONTENT = 204;
+  const BAD_REQUEST = 400;
+
   const { name, lastname, id, password, rolId, companyId, status } = req.body;
   const isValidPassword = validatePassword(password);
   try {
-    if (isValidPassword) {
-      const hash = bcrypt.hashSync(password, 12);
-      const item = await User.create({
-        name,
-        lastname,
-        id,
-        password: hash,
-        rolId,
-        companyId,
-        status,
-      });
-      res.status(HTTP_CREATED).json({
-        message: "Usuario registrado con éxito",
-        httpStatus: HTTP_CREATED,
-        status: "success",
-        content: item,
-      });
-    } else {
-      res.status(BAD_REQUEST).json({
-        message: "La contraseña no cumple con los requisitos de complejidad.",
+    if (!isValidPassword) {
+      return res.status(BAD_REQUEST).json({
+        message:
+          "La contraseña debe tener al menos 8 caracteres con letras mayúsculas, números y caracteres especiales.",
         httpStatus: BAD_REQUEST,
         status: "error",
       });
     }
+
+    const user = await getUserById(id);
+    if (user) {
+      return res.status(BAD_REQUEST).json({
+        message: "El usuario ya existe.",
+        httpStatus: BAD_REQUEST,
+        status: "error",
+      });
+    }
+
+    const hash = bcrypt.hashSync(password, 12);
+    const item = await User.create({
+      name,
+      lastname,
+      id,
+      password: hash,
+      rolId,
+      companyId,
+      status,
+    });
+    return res.status(HTTP_CREATED).json({
+      message: "Usuario registrado con éxito",
+      httpStatus: HTTP_CREATED,
+      status: "success",
+      content: item,
+    });
   } catch (error) {
     console.log("ER: ", error);
-    res.json({ httpStatus: HTTP_NOT_FOUND, error: error });
+    return res.status(BAD_REQUEST).json({
+      message:
+        "Ocurrió un error al crear el usuario, por favor intente de nuevo",
+      httpStatus: BAD_REQUEST,
+      status: "error",
+      item: {},
+    });
   }
 };
 
@@ -117,7 +141,7 @@ export const updateUserById = async (req, res) => {
         companyId,
         status,
       },
-      { new: true } // Devuelve el documento actualizado
+      { new: true }, // Devuelve el documento actualizado
     );
 
     // Verificar si el Usuario existe y fue actualizado
@@ -195,7 +219,7 @@ export const updateUserStatus = async (req, res) => {
     const updatedProduct = await User.findByIdAndUpdate(
       _id,
       { status: newStatus },
-      { new: true } // Devuelve el documento actualizado
+      { new: true }, // Devuelve el documento actualizado
     );
     console.log(updatedProduct);
 
@@ -218,5 +242,14 @@ export const updateUserStatus = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(HTTP_INTERNAL_SERVER_ERROR).json({ error: error.message });
+  }
+};
+
+export const getUserById = async (id) => {
+  try {
+    const user = await User.findOne({ id });
+    return user;
+  } catch (error) {
+    return null;
   }
 };
