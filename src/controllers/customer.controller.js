@@ -85,7 +85,6 @@ export const updateCustomerStatusById = async (req, res) => {
 
 // Actualizar un cliente por su ID
 export const updateCustomerById = async (req, res) => {
-  console.log("cus", req.params);
   const _id = req.params._id;
   // Extraer los campos que se pueden actualizar
   const { cedula, firstName, lastName, phone, address, comments, idCompany } =

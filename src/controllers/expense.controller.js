@@ -2,7 +2,8 @@ import Expenses from "../models/expenses.js";
 import moment from "moment-timezone";
 import dotenv from "dotenv";
 import { ObjectId } from "mongodb";
-import { formatDateWithTimeZone } from "../helpers/dateUtils/formatDates.js";
+
+import { getDateRangeWithTimezone } from "../helpers/dateUtils/dataRanges.js";
 dotenv.config();
 
 // Crear un nuevo gasto
@@ -216,72 +217,40 @@ export const getDailyTotalExpenses = async (req, res) => {
 };
 
 export const getExpensesByDateRange = async (req, res) => {
-  try {
-    const { startDate, endDate, idCompany } = req.body;
+  const { startDate, endDate, idCompany } = req.body;
 
-    // Validar las fechas de entrada
-    if (!startDate || !endDate) {
-      return res.status(+process.env.BAD_REQUEST).json({
-        httpStatus: +process.env.BAD_REQUEST,
-        message: "Fecha de inicio y Fecha de finalización son obligatorias.",
-        status: "error",
-        content: [],
-      });
-    }
+  // Validar las fechas de entrada
+  if (!startDate || !endDate) {
+    return res.status(+process.env.BAD_REQUEST).json({
+      httpStatus: +process.env.BAD_REQUEST,
+      message: "Fecha de inicio y Fecha de finalización son obligatorias.",
+      status: "error",
+      content: [],
+    });
+  }
 
-    const { startDay, endDay } = formatDateWithTimeZone(startDate, endDate);
+  const dateRange = getDateRangeWithTimezone(startDate, endDate);
+  const startDay = dateRange.startDate;
+  const endDay = dateRange.endDate;
 
-    // const startDay = moment
-    //   .tz(startDate, "YYYY-MM-DD", "America/Bogota")
-    //   .startOf("day");
-    // const endDay = moment
-    //   .tz(endDate, "YYYY-MM-DD", "America/Bogota")
-    //   .endOf("day");
+  const items = await Expenses.find({
+    date: { $gte: startDay.toDate(), $lte: endDay.toDate() },
+    companyId: idCompany,
+  })
+    .populate("idSupplier")
+    .exec();
 
-    // const startDateObj = new Date(startDate);
-    // const endDateObj = new Date(endDate);
-    // endDateObj.setUTCHours(23, 59, 59, 999);
-
-    // Consultar la base de datos para obtener las ventas dentro del rango de fechas
-
-    const items = await Venta.find({
-      date: { $gte: startDay, $lte: endDay },
-      companyId: idCompany,
-    })
-      .populate("idCliente")
-      .exec();
-    // const items = await Venta.find({
-    //   date: { $gte: startDay.toDate(), $lte: endDay.toDate() },
-    //   companyId: idCompany,
-    // })
-    // .populate("idCliente")
-    // .exec();
-
-    const computedSales = items.map((item) => ({
-      _id: item._id,
-      date: moment(item.date).tz("America/Bogota").format("DD/MM/YYYY"),
-      payMethod: item.payMethod,
-      saleType: item.saleType,
-      totalVenta: item.totalVenta,
-      cliente: item.idCliente._id,
-      fullName: item.idCliente.firstName + " " + item.idCliente.lastName,
-      detalleVenta: item.detalleVenta,
-    }));
-
-    if (computedSales.length > 0) {
-      return res.json({
-        httpStatus: +process.env.HTTP_OK,
-        content: computedSales,
-        status: "success",
-      });
-    } else {
-      return res.json({
-        httpStatus: +process.env.HTTP_NO_CONTENT,
-        content: [],
-        status: "success",
-      });
-    }
-  } catch (error) {
-    res.status(+process.env.HTTP_INTERNAL_SERVER_ERROR).json({ error: error });
+  if (items.length > 0) {
+    return res.json({
+      httpStatus: +process.env.HTTP_OK,
+      content: items,
+      status: "success",
+    });
+  } else {
+    return res.json({
+      httpStatus: +process.env.HTTP_NO_CONTENT,
+      content: [],
+      status: "success",
+    });
   }
 };
